@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>London December 2026 · Route Maps</title>
+  <meta name="description" content="Interactive 4-day London itinerary, 1–4 December 2026, based at Brick Lane E1. Day-by-day route maps with walking and Tube legs.">
+  <meta name="theme-color" content="#070E1B">
+  <meta property="og:title" content="London December 2026 · Route Maps">
+  <meta property="og:description" content="Interactive 4-day London itinerary with schematic route maps, timed legs, and Google Maps links.">
+  <meta property="og:type" content="website">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="London Dec 26">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#070E1B;--bg2:#0C1627;--surface:#111E30;--surface2:#192B42;--border:rgba(255,255,255,0.08);--border-h:rgba(255,255,255,0.14);--ink:#E2EAF4;--ink2:#8FA8C0;--ink3:#506070;--walk:#38BDF8;--walk2:#0EA5E9;--transit:#FB923C;--transit2:#F97316;--river-stroke:rgba(56,189,248,0.35);--river-label:rgba(56,189,248,0.55);--warn-bg:rgba(251,146,60,0.10);--warn-border:rgba(251,146,60,0.25);--warn-ink:#FECDA6;--pin-bg:#38BDF8;--pin-ink:#030810;--chip:rgba(255,255,255,0.045);--chip-h:rgba(255,255,255,0.08);--shadow:0 8px 32px rgba(0,0,0,0.5);--shadow-sm:0 2px 10px rgba(0,0,0,0.35);--glow-walk:0 0 24px rgba(56,189,248,0.25);--glow-fab:0 6px 28px rgba(56,189,248,0.35);--radius:14px;--radius-sm:9px;--radius-pill:999px;--font-body:'Inter',system-ui,-apple-system,sans-serif;--font-head:'Space Grotesk',system-ui,sans-serif;--t:0.2s;--ease:cubic-bezier(0.4,0,0.2,1);color-scheme:dark}
+    [data-theme="light"]{--bg:#EEF3F9;--bg2:#E4ECF5;--surface:#FFFFFF;--surface2:#F4F8FC;--border:rgba(0,0,0,0.08);--border-h:rgba(0,0,0,0.14);--ink:#0D1B2A;--ink2:#476080;--ink3:#8AAABB;--walk:#0369A1;--walk2:#0284C7;--transit:#C2410C;--transit2:#EA580C;--river-stroke:rgba(3,105,161,0.25);--river-label:rgba(3,105,161,0.45);--warn-bg:rgba(234,88,12,0.08);--warn-border:rgba(234,88,12,0.2);--warn-ink:#9A3412;--pin-bg:#0369A1;--pin-ink:#FFFFFF;--chip:rgba(0,0,0,0.04);--chip-h:rgba(0,0,0,0.07);--shadow:0 8px 32px rgba(0,0,0,0.12);--shadow-sm:0 2px 10px rgba(0,0,0,0.08);--glow-walk:0 0 24px rgba(3,105,161,0.15);--glow-fab:0 6px 28px rgba(3,105,161,0.25);color-scheme:light}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
+    body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.6;min-height:100dvh;overflow-x:hidden;padding-bottom:max(100px,calc(env(safe-area-inset-bottom,0px) + 90px));background-image:radial-gradient(ellipse 100% 60% at 50% -10%,rgba(56,189,248,0.07) 0%,transparent 65%)}
+    button{font-family:inherit;cursor:pointer;border:none;background:none}
+    a{color:var(--walk);text-decoration:none}
+    .page-wrap{max-width:860px;margin:0 auto;padding-inline:max(16px,env(safe-area-inset-left,16px))}
+    .hero{padding-top:max(28px,calc(env(safe-area-inset-top,0px) + 24px));padding-bottom:24px}
+    .hero-inner{display:flex;align-items:flex-start;gap:14px}
+    .hero-text{flex:1;min-width:0}
+    .hero h1{font-family:var(--font-head);font-size:clamp(1.55rem,5vw,2.1rem);font-weight:700;line-height:1.1;letter-spacing:-0.025em;text-wrap:balance}
+    .hero h1 .city{display:block;background:linear-gradient(130deg,var(--walk) 0%,#60D0FF 50%,var(--transit) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .hero-pills{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+    .pill{display:inline-flex;align-items:center;gap:5px;background:var(--chip);border:1px solid var(--border);border-radius:var(--radius-pill);padding:4px 11px;font-size:0.78rem;font-weight:500;color:var(--ink2)}
+    .btn-theme{flex-shrink:0;width:42px;height:42px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:grid;place-items:center;color:var(--ink2);transition:transform var(--t) var(--ease),border-color var(--t) var(--ease),color var(--t) var(--ease),box-shadow var(--t) var(--ease);box-shadow:var(--shadow-sm)}
+    .btn-theme:hover{transform:scale(1.08);border-color:var(--walk);color:var(--walk);box-shadow:var(--glow-walk)}
+    .tabs-wrap{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;padding-block:10px;border-bottom:1px solid var(--border);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px)}
+    [data-theme="dark"] .tabs-wrap{background:rgba(7,14,27,0.82)}
+    [data-theme="light"] .tabs-wrap{background:rgba(238,243,249,0.84)}
+    .tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+    .tab{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:10px 6px;border-radius:var(--radius-sm);background:var(--surface);border:1px solid var(--border);color:var(--ink2);transition:background var(--t) var(--ease),border-color var(--t) var(--ease),color var(--t) var(--ease);overflow:hidden}
+    .tab::after{content:'';position:absolute;bottom:0;left:10%;right:10%;height:3px;border-radius:3px 3px 0 0;background:linear-gradient(90deg,var(--walk),var(--transit));transform:scaleX(0);transition:transform var(--t) var(--ease)}
+    .tab[aria-selected="true"]{color:var(--ink);border-color:rgba(56,189,248,0.4);background:var(--surface2)}
+    .tab[aria-selected="true"]::after{transform:scaleX(1)}
+    .tab:hover:not([aria-selected="true"]){background:var(--chip-h);border-color:var(--border-h)}
+    .tab b{font-family:var(--font-head);font-size:0.93rem;font-weight:600}
+    .tab span{font-size:0.7rem;color:var(--ink3)}
+    :focus-visible{outline:2px solid var(--walk);outline-offset:3px}
+    #day{display:flex;flex-direction:column;gap:20px;padding-block:22px}
+    @keyframes fadeSlideUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+    .day-animate{animation:fadeSlideUp 0.38s var(--ease) both}
+    .day-header{display:flex;flex-direction:column;gap:2px}
+    .day-date{font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--walk)}
+    .day-title{font-family:var(--font-head);font-size:1.25rem;font-weight:700;letter-spacing:-0.015em}
+    .mapbox{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm)}
+    svg{display:block;width:100%;height:auto}
+    .legend{display:flex;flex-wrap:wrap;align-items:center;gap:6px 20px;padding:10px 16px;border-top:1px solid var(--border);font-size:0.78rem;color:var(--ink3)}
+    .leg-swatch{display:inline-flex;align-items:center;gap:7px}
+    .swatch-line{width:22px;height:3px;border-radius:3px;background:var(--walk);flex-shrink:0}
+    .swatch-line.t{background:repeating-linear-gradient(90deg,var(--transit) 0,var(--transit) 5px,transparent 5px,transparent 10px)}
+    .notes{background:var(--warn-bg);border:1px solid var(--warn-border);border-radius:var(--radius);padding:14px 16px}
+    .notes-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+    .notes-head h3{font-family:var(--font-head);font-size:0.88rem;font-weight:600;color:var(--warn-ink)}
+    .notes ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+    .notes li{display:flex;gap:8px;font-size:0.86rem;color:var(--warn-ink);opacity:0.9;line-height:1.5}
+    .notes li::before{content:'→';flex-shrink:0;color:var(--transit);font-weight:700;margin-top:1px}
+    .tl{list-style:none;display:flex;flex-direction:column}
+    .stop-item{display:flex;flex-direction:column}
+    .stop{display:grid;grid-template-columns:36px minmax(0,1fr);gap:12px;padding:12px 10px;border-radius:var(--radius-sm);cursor:pointer;transition:background var(--t) var(--ease)}
+    .stop:hover,.stop.on{background:var(--chip-h)}
+    .stop.on .stop-name{color:var(--walk)}
+    .pinno{width:34px;height:34px;border-radius:50%;background:var(--pin-bg);color:var(--pin-ink);display:grid;place-items:center;font-weight:700;font-size:0.8rem;font-variant-numeric:tabular-nums;flex-shrink:0;transition:transform var(--t) var(--ease),box-shadow var(--t) var(--ease)}
+    .stop.on .pinno{transform:scale(1.12);box-shadow:0 0 0 5px rgba(56,189,248,0.2)}
+    .stop-name{font-weight:600;font-size:0.95rem;transition:color var(--t) var(--ease);line-height:1.35}
+    .stop-time{font-variant-numeric:tabular-nums;color:var(--walk);font-weight:600;font-size:0.8rem;margin-top:2px}
+    .stop-desc{color:var(--ink2);font-size:0.86rem;margin-top:3px}
+    .leg{margin-left:29px;border-left:2px solid var(--walk);padding:6px 0 6px 20px;display:flex;flex-direction:column;gap:4px;font-size:0.85rem}
+    .leg.transit{border-left:2px dashed var(--transit)}
+    .leg-mode{font-weight:600;color:var(--ink2);display:flex;align-items:center;gap:6px}
+    .leg-dot{width:7px;height:7px;border-radius:50%;background:var(--walk);flex-shrink:0}
+    .leg.transit .leg-dot{background:var(--transit)}
+    .leg-how{color:var(--ink3);font-size:0.83rem;line-height:1.5}
+    .leg-flag{display:inline-flex;align-items:center;gap:5px;background:var(--warn-bg);border:1px solid var(--warn-border);border-radius:6px;padding:4px 10px;color:var(--warn-ink);font-size:0.8rem;align-self:flex-start;line-height:1.4}
+    .links-section{display:flex;flex-direction:column;gap:10px}
+    .links-title{font-family:var(--font-head);font-size:0.9rem;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:0.06em}
+    .links{display:flex;flex-direction:column;gap:8px}
+    .map-link{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 16px;color:var(--walk);text-decoration:none;font-weight:600;font-size:0.88rem;transition:border-color var(--t) var(--ease),background var(--t) var(--ease),transform var(--t) var(--ease)}
+    .map-link:hover{border-color:rgba(56,189,248,0.4);background:var(--chip-h);transform:translateX(3px)}
+    .map-link small{display:block;color:var(--ink3);font-weight:400;font-size:0.78rem;margin-top:2px}
+    .map-link.main{background:var(--walk);color:var(--pin-ink);border-color:var(--walk);box-shadow:var(--glow-fab)}
+    .map-link.main:hover{background:var(--walk2);border-color:var(--walk2)}
+    .map-link.main small{color:inherit;opacity:0.75}
+    .map-link-arrow{flex-shrink:0;opacity:0.65}
+    .footer-note{color:var(--ink3);font-size:0.78rem;text-align:center;padding-block:4px 12px;line-height:1.65}
+    .fab{position:fixed;bottom:max(28px,calc(env(safe-area-inset-bottom,0px) + 20px));right:max(20px,calc(env(safe-area-inset-right,0px) + 16px));z-index:50;display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--walk),var(--walk2));color:var(--pin-ink);border-radius:var(--radius-pill);padding:13px 20px;font-weight:700;font-size:0.86rem;font-family:inherit;box-shadow:var(--glow-fab);transition:transform var(--t) var(--ease),box-shadow var(--t) var(--ease);border:none;cursor:pointer}
+    .fab:hover{transform:translateY(-3px);box-shadow:0 10px 36px rgba(56,189,248,0.45)}
+    .fab:active{transform:translateY(-1px)}
+    .toast{position:fixed;bottom:max(104px,calc(env(safe-area-inset-bottom,0px) + 100px));left:50%;transform:translateX(-50%) translateY(12px);background:var(--surface2);border:1px solid var(--border-h);border-radius:var(--radius-pill);padding:10px 22px;font-size:0.86rem;font-weight:600;color:var(--ink);box-shadow:var(--shadow);opacity:0;transition:opacity 0.28s var(--ease),transform 0.28s var(--ease);z-index:100;white-space:nowrap;pointer-events:none}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    @media(max-width:540px){.hero h1{font-size:1.45rem}.tab span{display:none}.tab b{font-size:0.85rem}.fab-label{display:none}.fab{padding:15px;border-radius:50%}}
+    @media(max-width:360px){.tab b{font-size:0.75rem}.tab{padding:8px 4px}}
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <div class="page-wrap">
+      <div class="hero-inner">
+        <div class="hero-text">
+          <h1><span class="city">London</span>December 2026</h1>
+          <div class="hero-pills">
+            <span class="pill">📍 Brick Lane, E1 6RL</span>
+            <span class="pill">🗓 1 – 4 Dec</span>
+            <span class="pill">4 days</span>
+          </div>
+        </div>
+        <button class="btn-theme" id="themeBtn" aria-label="Toggle light / dark theme">
+          <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="tabs-wrap" role="navigation" aria-label="Day navigation">
+    <div class="page-wrap">
+      <div class="tabs" role="tablist" id="tabs"></div>
+    </div>
+  </div>
+  <div class="page-wrap">
+    <div id="day" role="tabpanel" aria-live="polite"></div>
+    <p class="footer-note">Maps are schematic — stops are plotted at real lat/lon positions, the river is approximate, and legs run straight between stops. Use the Google Maps links for true turn-by-turn routes. Times are estimates; check live journey times on the day.</p>
+  </div>
+  <button class="fab" id="shareBtn" aria-label="Share this page">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+    <span class="fab-label">Share</span>
+  </button>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script>
+var THAMES=[[51.4861,-0.1240],[51.4948,-0.1235],[51.5008,-0.1219],[51.5063,-0.1197],[51.5086,-0.1169],[51.5097,-0.1042],[51.5095,-0.0985],[51.5086,-0.0938],[51.5079,-0.0877],[51.5055,-0.0754],[51.5030,-0.0650],[51.5040,-0.0580]];
+var BL={n:'Brick Lane (E1 6RL)',q:'Brick Lane, London E1 6RL',ll:[51.5217,-0.0716]};
+var DAYS=[
+{tab:'Day 1',date:'Tue 1 Dec',title:'Victoria, Westminster and Covent Garden',
+ notes:['Only free sights today, so the multi-attraction pass stays unused until the River Cruise on 2 Dec.','Check-in is 15:00. Ask the host for an early bag drop; if the answer is no, use bag storage near Aldgate East.','Sunset is about 15:55, so Covent Garden is lit by the time you arrive.'],
+ stops:[
+ {n:'Victoria Coach Station',q:'Victoria Coach Station, London SW1W 9TP',ll:[51.4936,-0.1488],t:'11:25',d:'Coach arrives. Walk 4 min to Victoria station with your bags.',leg:{m:'tube',min:35,how:'District line direct, Victoria to Aldgate East (about 27 min), then 6 min walk to Brick Lane.'}},
+ {n:BL.n,q:BL.q,ll:BL.ll,t:'12:15\u201313:10',d:'Drop bags, then lunch on Brick Lane.',leg:{m:'tube',min:28,how:'Walk 6 min to Aldgate East, District line to Westminster (about 17 min), then 3 min to Parliament Square.'}},
+ {n:'Big Ben and Parliament (exterior)',q:'Big Ben, London SW1A 0AA',ll:[51.5007,-0.1246],t:'13:45\u201314:15',d:'Parliament Square and the Westminster Bridge viewpoint.',leg:{m:'walk',min:3,how:'Cross Parliament Square to the Abbey, west side.'}},
+ {n:'Westminster Abbey (exterior)',q:'Westminster Abbey, London SW1P 3PA',ll:[51.4994,-0.1275],t:'14:15\u201314:30',d:'Great West Door and the square.',leg:{m:'walk',min:14,how:'North along Whitehall, past the Cenotaph and Downing Street gates, to Horse Guards.'}},
+ {n:'Horse Guards Parade',q:'Horse Guards Parade, London SW1A 2AX',ll:[51.5047,-0.1277],t:'14:45\u201315:10',d:'Mounted sentries at the Whitehall arch.',leg:{m:'walk',min:8,how:'Continue north on Whitehall to Trafalgar Square.'}},
+ {n:'Trafalgar Square',q:'Trafalgar Square, London WC2N 5DN',ll:[51.5080,-0.1281],t:'15:20\u201315:50',d:"Christmas tree and Nelson's Column.",leg:{m:'walk',min:14,how:"North-east via St Martin's Lane and Long Acre to the Market."}},
+ {n:'Covent Garden',q:'Covent Garden Market, London WC2E 8RF',ll:[51.5120,-0.1223],t:'16:05\u201317:45',d:'Market halls and Christmas lights after dark.',leg:{m:'tube',min:38,how:'Piccadilly line to Holborn (1 stop), Central line to Liverpool Street (about 8 min), then 12 min walk to Brick Lane.'}},
+ {n:BL.n,q:BL.q,ll:BL.ll,t:'18:25',d:'Dinner on Brick Lane.'}]},
+{tab:'Day 2',date:'Wed 2 Dec',title:'Tower, River Cruise, Tower Bridge, Sky Garden',
+ notes:['The official London Eye River Cruise leaves from London Eye Pier at Waterloo, sails a loop of about 40 min and makes no stops. It does not start at the Tower. Check your e-ticket for the boarding pier.','Your 12:00 exit from the Tower leaves too little time to reach the pier for 12:45. This plan leaves the Tower at 11:35, which keeps a short lunch before boarding.','The cruise should finish near 13:25, not 14:00, and Tower Bridge is about 32 min away. Leave the pier at 13:30 to arrive for 14:10. Tower Bridge last entry is 17:00, so confirm your ticket is not strictly timed in case you run late.','Sky Garden entry is 16:45. Arrive by 16:30 for security. Sunset is about 15:55, so the view is fully night.'],
+ stops:[
+ {n:BL.n,q:BL.q,ll:BL.ll,t:'08:50',d:'Leave after breakfast.',leg:{m:'tube',min:20,how:'Walk 6 min to Aldgate East, District line to Tower Hill (3 min), 5 min to the entrance.',flag:'Walking is about 28 min (2 km), so the Tube is recommended.'}},
+ {n:'Tower of London',q:'Tower of London, London EC3N 4AB',ll:[51.5081,-0.0759],t:'09:30 arrive, in at 09:45, out 11:35',d:'Crown Jewels first, then the White Tower and walls. Bring the booking to the gate.',leg:{m:'tube',min:32,how:'Tower Hill, District or Circle line to Westminster (about 15 min), then walk over Westminster Bridge to County Hall and the pier (about 10 min).',flag:'Over 25 min on foot (5.5 km), so use the Tube.'}},
+ {n:'London Eye Pier (County Hall)',q:'London Eye Pier, London SE1 7PB',ll:[51.5034,-0.1205],t:'12:15 arrive, lunch, board 12:45',d:'Grab lunch nearby before boarding. Cruise ends about 13:25.',leg:{m:'tube',min:32,how:'Walk 8 min to Waterloo, Jubilee line to London Bridge (4 min), then walk 15 min east along Tooley Street to Tower Bridge.',flag:'Tight. Leave the pier by 13:30.'}},
+ {n:'Tower Bridge Exhibition',q:'Tower Bridge Exhibition, London SE1 2UP',ll:[51.5055,-0.0754],t:'14:10\u201315:40',d:'Glass walkway and engine rooms. Allow 90 min.',leg:{m:'walk',min:20,how:'Across Tower Bridge to the north bank, up Great Tower Street, then Eastcheap and Fenchurch Street. Leadenhall Market is a 2 min detour for a hot drink.'}},
+ {n:'Sky Garden',q:'Sky Garden, 20 Fenchurch Street, London EC3M 8AF',ll:[51.5113,-0.0836],t:'Arrive 16:30, in 16:45\u201317:45',d:'Night view over the City and the river.',leg:{m:'walk',min:22,how:'North-east through Bishopsgate and Spitalfields to Brick Lane, about 1.6 km.'}},
+ {n:BL.n,q:BL.q,ll:BL.ll,t:'18:10',d:'Dinner on Brick Lane.'}]},
+{tab:'Day 3',date:'Thu 3 Dec',title:"British Museum, Shrek's Adventure, London Eye",
+ notes:["Thursday: Shrek's Adventure opens at 11:00. Listings disagree on the last entry for weekdays in the festive period (14:00 on one, 15:00 on another). Book a 14:15 slot only after checking shreksadventure.com. If the last entry is 14:00, leave the Museum by 12:40 and eat after.",'London Eye: some listings give 11:00\u201318:00 on winter weekdays. A 16:30 slot catches dusk (sunset about 15:55) and sits inside those hours.','The Museum end time is taken as 13:10 as you said. Leaving 20 min earlier makes lunch easier.'],
+ stops:[
+ {n:BL.n,q:BL.q,ll:BL.ll,t:'09:10',d:'Head west.',leg:{m:'tube',min:35,how:'Walk 12 min to Liverpool Street, Central line to Tottenham Court Road (about 11 min), then walk 8 min up to Great Russell Street.',flag:'Walking is about 55 min, so use the Tube.'}},
+ {n:'British Museum',q:'British Museum, London WC1B 3DG',ll:[51.5194,-0.1270],t:'Arrive 09:55, in 10:10\u201313:10',d:'Fixed booking.',leg:{m:'tube',min:28,how:'Walk 9 min to Tottenham Court Road, Northern line (Charing Cross branch) to Embankment (about 7 min), then cross Golden Jubilee Bridge (10 min) to County Hall.'}},
+ {n:"Shrek's Adventure (County Hall)",q:"Shrek's Adventure London, Westminster Bridge Road, London SE1 7PB",ll:[51.5019,-0.1197],t:'13:40 lunch, 14:15\u201315:45',d:'About 60 to 90 min. Lunch on the South Bank first.',leg:{m:'walk',min:4,how:'Along the riverside walk to the London Eye, directly next door. Use the free time for the riverside Christmas stalls if they are running.'}},
+ {n:'London Eye',q:'London Eye, London SE1 7PB',ll:[51.5033,-0.1195],t:'Slot 16:30, off by about 17:05',d:'One rotation is about 30 min. Arrive 10 min before.',leg:{m:'tube',min:35,how:'Walk 10 min to Waterloo, Waterloo & City line to Bank (4 min), Central line one stop to Liverpool Street, then 12 min walk to Brick Lane.'}},
+ {n:BL.n,q:BL.q,ll:BL.ll,t:'18:00',d:'Dinner on Brick Lane.'}]},
+{tab:'Day 4',date:'Fri 4 Dec',title:'Royal exteriors, Madame Tussauds, coach',
+ notes:['You did not give the coach time. This plan assumes it leaves after 16:00 from Victoria Coach Station. If it leaves earlier, skip the park walk and go straight to Madame Tussauds.','Check-out is 11:00 and the first stop is Victoria, so book bag storage near Victoria Coach Station before you travel. Collect the bags at about 15:15.','Madame Tussauds entry is 12:30. Arrive at 12:15. Baker Street is the next Tube stop after the walk through the parks.'],
+ stops:[
+ {n:BL.n,q:BL.q,ll:BL.ll,t:'08:30',d:'Check out with your bags.',leg:{m:'tube',min:40,how:'Walk 6 min to Aldgate East, District line direct to Victoria (about 27 min), then 5 min to the storage point.'}},
+ {n:'Victoria Coach Station (bag storage)',q:'Victoria Coach Station, London SW1W 9TP',ll:[51.4936,-0.1488],t:'09:10\u201309:30',d:'Drop the bags.',leg:{m:'walk',min:18,how:"Buckingham Gate and Birdcage Walk to the western end of St James's Park."}},
+ {n:"St James's Park",q:"St James's Park, London SW1A 2BJ",ll:[51.5025,-0.1348],t:'09:50\u201310:20',d:'Blue Bridge and the lake, looking back to Horse Guards.',leg:{m:'walk',min:10,how:'Westward along the lake and The Mall to the Victoria Memorial.'}},
+ {n:'Buckingham Palace (exterior)',q:'Buckingham Palace, London SW1A 1AA',ll:[51.5014,-0.1419],t:'10:30\u201310:55',d:'Forecourt railings and the Victoria Memorial. No entry.',leg:{m:'walk',min:10,how:"North through Green Park along Queen's Walk to Green Park station."}},
+ {n:'Green Park Station',q:'Green Park Underground Station, London',ll:[51.5067,-0.1428],t:'11:05\u201311:45',d:'Lunch around Piccadilly or Berkeley Street.',leg:{m:'tube',min:15,how:'Jubilee line, Green Park to Baker Street (4 stops, about 8 min), then 4 min walk to Marylebone Road.'}},
+ {n:'Madame Tussauds',q:'Madame Tussauds London, Marylebone Road, London NW1 5LR',ll:[51.5233,-0.1552],t:'Arrive 12:15, in 12:30\u201314:30',d:'Fixed booking, included in the pass.',leg:{m:'tube',min:25,how:'Walk 4 min to Baker Street, Bakerloo to Oxford Circus, Victoria line to Victoria (about 20 min), then 5 min back to the storage point.'}},
+ {n:'Victoria Coach Station',q:'Victoria Coach Station, London SW1W 9TP',ll:[51.4936,-0.1488],t:'About 15:15',d:'Collect the bags and wait for the coach.'}]}
+];
+// Theme
+var html=document.documentElement,stored=localStorage.getItem('theme'),sysDark=window.matchMedia('(prefers-color-scheme:dark)').matches;
+applyTheme(stored||(sysDark?'dark':'light'));
+document.getElementById('themeBtn').addEventListener('click',function(){applyTheme(html.dataset.theme==='dark'?'light':'dark')});
+function applyTheme(t){html.setAttribute('data-theme',t);localStorage.setItem('theme',t);var ico=document.getElementById('themeIcon');if(t==='dark'){ico.innerHTML='<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="currentColor" stroke="none"/>';}else{ico.innerHTML='<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';}}
+// Toast
+var toastEl=document.getElementById('toast'),toastTmr;
+function showToast(msg){clearTimeout(toastTmr);toastEl.textContent=msg;toastEl.classList.add('show');toastTmr=setTimeout(function(){toastEl.classList.remove('show');},2800);}
+// Share
+document.getElementById('shareBtn').addEventListener('click',function(){var url=location.href,title='London December 2026 Route Maps';if(navigator.share){navigator.share({title:title,url:url}).catch(function(){});}else if(navigator.clipboard){navigator.clipboard.writeText(url).then(function(){showToast('\u2713 Link copied to clipboard');}).catch(function(){showToast('Copy: '+url);});}else{showToast('Copy: '+url);}});
+// Utils
+var current=0;
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function mk(tag,cls,inner){var e=document.createElement(tag);if(cls)e.className=cls;if(inner!=null)e.innerHTML=inner;return e;}
+function gm(o,d,w,mode){return 'https://www.google.com/maps/dir/?api=1&origin='+encodeURIComponent(o)+'&destination='+encodeURIComponent(d)+(w&&w.length?'&waypoints='+w.map(encodeURIComponent).join('%7C'):'')+('&travelmode='+mode);}
+// Projection
+function project(day){var W=760,H=460,P=68,pts=day.stops.map(function(s){return s.ll;});var lat0=Math.max.apply(null,pts.map(function(p){return p[0];})),lat1=Math.min.apply(null,pts.map(function(p){return p[0];})),lon0=Math.min.apply(null,pts.map(function(p){return p[1];})),lon1=Math.max.apply(null,pts.map(function(p){return p[1];}));var k=Math.cos(51.5*Math.PI/180),sx=(lon1-lon0)*k*111320||1,sy=(lat0-lat1)*110574||1,s=Math.min((W-2*P)/sx,(H-2*P)/sy),ox=(W-sx*s)/2,oy=(H-sy*s)/2;return{W:W,H:H,f:function(p){return[ox+(p[1]-lon0)*k*111320*s,oy+(lat0-p[0])*110574*s];}};}
+// SVG
+function buildSVG(day){var pr=project(day),out='<svg viewBox="0 0 '+pr.W+' '+pr.H+'" role="img" aria-label="Schematic route map for '+esc(day.title)+'">';out+='<rect width="'+pr.W+'" height="'+pr.H+'" fill="var(--surface)"/>';var th=THAMES.map(function(p){return pr.f(p).map(function(v){return v.toFixed(1);}).join(',');}).join(' ');out+='<polyline points="'+th+'" fill="none" stroke="var(--river-stroke)" stroke-width="20" stroke-linecap="round" stroke-linejoin="round" opacity="0.65"/>';var lp=pr.f([51.5086,-0.0938]);if(lp[0]>24&&lp[0]<pr.W-100&&lp[1]>24&&lp[1]<pr.H-24){out+='<text x="'+(lp[0]-28).toFixed(0)+'" y="'+(lp[1]+4).toFixed(0)+'" font-size="10" font-family="Georgia,serif" font-style="italic" fill="var(--river-label)">River Thames</text>';}
+var st=day.stops;st.forEach(function(s,i){var n=st[i+1];if(!s.leg||!n)return;var a=pr.f(s.ll),b=pr.f(n.ll),tube=s.leg.m==='tube';out+='<line x1="'+a[0].toFixed(1)+'" y1="'+a[1].toFixed(1)+'" x2="'+b[0].toFixed(1)+'" y2="'+b[1].toFixed(1)+'" stroke="'+(tube?'var(--transit)':'var(--walk)')+'" stroke-width="3"'+(tube?' stroke-dasharray="8 5"':'')+' stroke-linecap="round" opacity="0.9"/>';});
+st.forEach(function(s,i){var n=st[i+1];if(!s.leg||!n)return;var a=pr.f(s.ll),b=pr.f(n.ll),mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2;if(Math.hypot(a[0]-b[0],a[1]-b[1])<52)return;var tube=s.leg.m==='tube';out+='<g><rect x="'+(mx-18).toFixed(1)+'" y="'+(my-9).toFixed(1)+'" width="36" height="18" rx="9" fill="var(--surface)" stroke="'+(tube?'var(--transit)':'var(--walk)')+'" stroke-width="1.5"/><text x="'+mx.toFixed(1)+'" y="'+(my+4.5).toFixed(1)+'" font-size="10" text-anchor="middle" fill="var(--ink)" font-family="system-ui,sans-serif" font-weight="600">'+s.leg.min+'m</text></g>';});
+var groups={};st.forEach(function(s,i){var key=s.ll.join();if(!groups[key])groups[key]={ll:s.ll,ids:[]};groups[key].ids.push(i+1);});Object.keys(groups).forEach(function(k){var g=groups[k],p=pr.f(g.ll),lab=g.ids.join('/'),w=Math.max(26,lab.length*9+14);out+='<g class="svg-pin" data-ids="'+g.ids.join(',')+'" style="cursor:pointer"><rect x="'+(p[0]-w/2).toFixed(1)+'" y="'+(p[1]-14).toFixed(1)+'" width="'+w+'" height="28" rx="14" fill="var(--pin-bg)" stroke="var(--surface)" stroke-width="2.5"/><text x="'+p[0].toFixed(1)+'" y="'+(p[1]+5).toFixed(1)+'" font-size="11.5" font-weight="700" text-anchor="middle" fill="var(--pin-ink)" font-family="system-ui,sans-serif">'+lab+'</text></g>';});return out+'</svg>';}
+// Highlight
+function hl(n){document.querySelectorAll('.stop').forEach(function(r){r.classList.toggle('on',+r.dataset.i===n);});document.querySelectorAll('.svg-pin').forEach(function(p){p.style.opacity=p.dataset.ids.split(',').indexOf(String(n))>-1?'1':'0.3';});var active=document.querySelector('.stop[data-i="'+n+'"]');if(active)active.scrollIntoView({behavior:'smooth',block:'nearest'});}
+// Render
+function render(i){current=i;var day=DAYS[i],root=document.getElementById('day');root.innerHTML='';root.classList.remove('day-animate');void root.offsetWidth;root.classList.add('day-animate');document.querySelectorAll('.tab').forEach(function(b,j){b.setAttribute('aria-selected',j===i?'true':'false');});
+var hdr=mk('div','day-header');hdr.appendChild(mk('div','day-date',esc(day.date)));hdr.appendChild(mk('div','day-title',esc(day.title)));root.appendChild(hdr);
+var mapbox=mk('div','mapbox',buildSVG(day));mapbox.appendChild(mk('div','legend','<span class="leg-swatch"><span class="swatch-line"></span>Walking leg</span><span class="leg-swatch"><span class="swatch-line t"></span>Tube / bus leg</span><span style="color:var(--ink3)">Pills = minutes</span>'));root.appendChild(mapbox);
+mapbox.querySelectorAll('.svg-pin').forEach(function(p){p.addEventListener('click',function(){hl(+p.dataset.ids.split(',')[0]);});});
+if(day.notes&&day.notes.length){var notes=mk('div','notes'),nh=mk('div','notes-head','<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--warn-ink)" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="13"/><circle cx="12" cy="16.5" r="0.5" fill="var(--warn-ink)" stroke="var(--warn-ink)" stroke-width="1"/></svg><h3>Check before you go</h3>');notes.appendChild(nh);var ul=mk('ul');day.notes.forEach(function(n){ul.appendChild(mk('li','',esc(n)));});notes.appendChild(ul);root.appendChild(notes);}
+var tl=mk('ol','tl');day.stops.forEach(function(s,k){var li=mk('li','stop-item'),row=mk('div','stop');row.dataset.i=k+1;row.innerHTML='<div class="pinno">'+(k+1)+'</div><div><div class="stop-name">'+esc(s.n)+'</div><div class="stop-time">'+esc(s.t)+'</div><div class="stop-desc">'+esc(s.d)+'</div></div>';row.addEventListener('click',function(){hl(k+1);});li.appendChild(row);if(s.leg){var isTube=s.leg.m==='tube',lg=mk('div','leg'+(isTube?' transit':''));lg.innerHTML='<div class="leg-mode"><span class="leg-dot"></span>'+(isTube?'Tube / bus':'Walk')+' \u00b7 about '+s.leg.min+' min</div><div class="leg-how">'+esc(s.leg.how)+'</div>'+(s.leg.flag?'<div class="leg-flag">\u26a0 '+esc(s.leg.flag)+'</div>':'');li.appendChild(lg);}tl.appendChild(li);});root.appendChild(tl);
+var ls=mk('div','links-section');ls.appendChild(mk('div','links-title','Open in Google Maps'));var linkList=mk('div','links'),S=day.stops,mid=S.slice(1,-1).map(function(s){return s.q;}),arrow='<svg class="map-link-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
+var allA=mk('a','map-link main','<div><div>All stops in order</div><small>Every stop as a waypoint in walking mode</small></div>'+arrow);allA.href=gm(S[0].q,S[S.length-1].q,mid,'walking');allA.target='_blank';allA.rel='noopener noreferrer';linkList.appendChild(allA);
+var runs=[],cur=null;S.forEach(function(s,k){var nx=S[k+1];if(!nx||!s.leg)return;if(s.leg.m==='walk'){if(!cur){cur=[k];runs.push(cur);}cur.push(k+1);}else cur=null;});
+runs.forEach(function(r){var a=mk('a','map-link','<div><div>Walk: '+esc(S[r[0]].n)+' \u2192 '+esc(S[r[r.length-1]].n)+'</div><small>Stops '+(r[0]+1)+'\u2013'+(r[r.length-1]+1)+'</small></div>'+arrow);a.href=gm(S[r[0]].q,S[r[r.length-1]].q,r.slice(1,-1).map(function(x){return S[x].q;}),'walking');a.target='_blank';a.rel='noopener noreferrer';linkList.appendChild(a);});
+ls.appendChild(linkList);root.appendChild(ls);try{history.replaceState(null,'','#day-'+(i+1));}catch(e){};}
+// Init
+(function(){var tabsEl=document.getElementById('tabs');DAYS.forEach(function(d,i){var b=document.createElement('button');b.className='tab';b.setAttribute('role','tab');b.setAttribute('aria-controls','day');b.innerHTML='<b>'+d.tab+'</b><span>'+d.date+'</span>';b.addEventListener('click',function(){render(i);});tabsEl.appendChild(b);});function fromHash(){var m=/^#day-([1-4])$/.exec(location.hash);return m?+m[1]-1:0;}window.addEventListener('hashchange',function(){var i=fromHash();if(i!==current)render(i);});render(fromHash());})();
+  </script>
+</body>
+</html>
