@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>London December 2026 · Route Maps</title>
-  <meta name="description" content="Interactive 4-day London itinerary, 1–4 December 2026, based at Brick Lane E1. Day-by-day route maps with walking and Tube legs.">
+  <title>London December 2026 · Route Maps &amp; Budget Eats</title>
+  <meta name="description" content="Interactive 4-day London itinerary, 1–4 December 2026, based at Brick Lane E1. Realistic dark-mode maps, cheapest Bus/Tube step-by-step directions, and walkable budget eats.">
   <meta name="theme-color" content="#070E1B">
-  <meta property="og:title" content="London December 2026 · Route Maps">
-  <meta property="og:description" content="Interactive 4-day London itinerary with schematic route maps, timed legs, and Google Maps links.">
+  <meta property="og:title" content="London December 2026 · Route Maps &amp; Budget Eats">
+  <meta property="og:description" content="Interactive 4-day London itinerary with realistic dark-mode street maps, cheapest TfL Bus vs Tube directions, and budget food picks.">
   <meta property="og:type" content="website">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -15,27 +15,67 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   <style>
-    :root{--bg:#070E1B;--bg2:#0C1627;--surface:#111E30;--surface2:#192B42;--border:rgba(255,255,255,0.08);--border-h:rgba(255,255,255,0.14);--ink:#E2EAF4;--ink2:#8FA8C0;--ink3:#506070;--walk:#38BDF8;--walk2:#0EA5E9;--transit:#FB923C;--transit2:#F97316;--river-stroke:rgba(56,189,248,0.35);--river-label:rgba(56,189,248,0.55);--warn-bg:rgba(251,146,60,0.10);--warn-border:rgba(251,146,60,0.25);--warn-ink:#FECDA6;--pin-bg:#38BDF8;--pin-ink:#030810;--chip:rgba(255,255,255,0.045);--chip-h:rgba(255,255,255,0.08);--shadow:0 8px 32px rgba(0,0,0,0.5);--shadow-sm:0 2px 10px rgba(0,0,0,0.35);--glow-walk:0 0 24px rgba(56,189,248,0.25);--glow-fab:0 6px 28px rgba(56,189,248,0.35);--radius:14px;--radius-sm:9px;--radius-pill:999px;--font-body:'Inter',system-ui,-apple-system,sans-serif;--font-head:'Space Grotesk',system-ui,sans-serif;--t:0.2s;--ease:cubic-bezier(0.4,0,0.2,1);color-scheme:dark}
-    [data-theme="light"]{--bg:#EEF3F9;--bg2:#E4ECF5;--surface:#FFFFFF;--surface2:#F4F8FC;--border:rgba(0,0,0,0.08);--border-h:rgba(0,0,0,0.14);--ink:#0D1B2A;--ink2:#476080;--ink3:#8AAABB;--walk:#0369A1;--walk2:#0284C7;--transit:#C2410C;--transit2:#EA580C;--river-stroke:rgba(3,105,161,0.25);--river-label:rgba(3,105,161,0.45);--warn-bg:rgba(234,88,12,0.08);--warn-border:rgba(234,88,12,0.2);--warn-ink:#9A3412;--pin-bg:#0369A1;--pin-ink:#FFFFFF;--chip:rgba(0,0,0,0.04);--chip-h:rgba(0,0,0,0.07);--shadow:0 8px 32px rgba(0,0,0,0.12);--shadow-sm:0 2px 10px rgba(0,0,0,0.08);--glow-walk:0 0 24px rgba(3,105,161,0.15);--glow-fab:0 6px 28px rgba(3,105,161,0.25);color-scheme:light}
+    :root{
+      --bg:#070E1B;--bg2:#0C1627;--surface:#111E30;--surface2:#192B42;
+      --border:rgba(255,255,255,0.08);--border-h:rgba(255,255,255,0.16);
+      --ink:#E2EAF4;--ink2:#8FA8C0;--ink3:#5C7288;
+      --walk:#38BDF8;--walk2:#0EA5E9;
+      --bus:#34D399;--bus2:#10B981;--bus-bg:rgba(52,211,153,0.10);--bus-border:rgba(52,211,153,0.28);
+      --transit:#FB923C;--transit2:#F97316;
+      --food:#FBBF24;--food-bg:rgba(251,191,36,0.10);--food-border:rgba(251,191,36,0.28);
+      --river-fill:rgba(14,165,233,0.22);--river-stroke:rgba(56,189,248,0.48);--river-label:rgba(125,211,252,0.65);
+      --park-fill:rgba(16,185,129,0.11);--park-stroke:rgba(52,211,153,0.25);
+      --road-stroke:rgba(255,255,255,0.08);--grid-stroke:rgba(255,255,255,0.025);
+      --warn-bg:rgba(251,146,60,0.10);--warn-border:rgba(251,146,60,0.26);--warn-ink:#FECDA6;
+      --pin-bg:#38BDF8;--pin-ink:#030810;
+      --chip:rgba(255,255,255,0.045);--chip-h:rgba(255,255,255,0.09);
+      --shadow:0 8px 32px rgba(0,0,0,0.5);--shadow-sm:0 2px 10px rgba(0,0,0,0.35);
+      --glow-walk:0 0 24px rgba(56,189,248,0.25);--glow-fab:0 6px 28px rgba(56,189,248,0.35);
+      --radius:14px;--radius-sm:9px;--radius-pill:999px;
+      --font-body:'Inter',system-ui,-apple-system,sans-serif;--font-head:'Space Grotesk',system-ui,sans-serif;
+      --t:0.2s;--ease:cubic-bezier(0.4,0,0.2,1);
+      color-scheme:dark;
+    }
+    [data-theme="light"]{
+      --bg:#EEF3F9;--bg2:#E4ECF5;--surface:#FFFFFF;--surface2:#F4F8FC;
+      --border:rgba(0,0,0,0.08);--border-h:rgba(0,0,0,0.15);
+      --ink:#0D1B2A;--ink2:#476080;--ink3:#6F879E;
+      --walk:#0369A1;--walk2:#0284C7;
+      --bus:#047857;--bus2:#059669;--bus-bg:rgba(4,120,87,0.08);--bus-border:rgba(4,120,87,0.22);
+      --transit:#C2410C;--transit2:#EA580C;
+      --food:#B45309;--food-bg:rgba(180,83,9,0.08);--food-border:rgba(180,83,9,0.22);
+      --river-fill:rgba(3,105,161,0.14);--river-stroke:rgba(3,105,161,0.38);--river-label:rgba(3,105,161,0.62);
+      --park-fill:rgba(5,150,105,0.12);--park-stroke:rgba(5,150,105,0.28);
+      --road-stroke:rgba(13,27,42,0.09);--grid-stroke:rgba(13,27,42,0.03);
+      --warn-bg:rgba(234,88,12,0.08);--warn-border:rgba(234,88,12,0.2);--warn-ink:#9A3412;
+      --pin-bg:#0369A1;--pin-ink:#FFFFFF;
+      --chip:rgba(0,0,0,0.04);--chip-h:rgba(0,0,0,0.07);
+      --shadow:0 8px 32px rgba(0,0,0,0.12);--shadow-sm:0 2px 10px rgba(0,0,0,0.08);
+      --glow-walk:0 0 24px rgba(3,105,161,0.15);--glow-fab:0 6px 28px rgba(3,105,161,0.25);
+      color-scheme:light;
+    }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
     body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.6;min-height:100dvh;overflow-x:hidden;padding-bottom:max(100px,calc(env(safe-area-inset-bottom,0px) + 90px));background-image:radial-gradient(ellipse 100% 60% at 50% -10%,rgba(56,189,248,0.07) 0%,transparent 65%)}
-    button{font-family:inherit;cursor:pointer;border:none;background:none}
+    button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
     a{color:var(--walk);text-decoration:none}
-    .page-wrap{max-width:860px;margin:0 auto;padding-inline:max(16px,env(safe-area-inset-left,16px))}
-    .hero{padding-top:max(28px,calc(env(safe-area-inset-top,0px) + 24px));padding-bottom:24px}
+    .page-wrap{max-width:900px;margin:0 auto;padding-inline:max(16px,env(safe-area-inset-left,16px))}
+    .hero{padding-top:max(26px,calc(env(safe-area-inset-top,0px) + 22px));padding-bottom:20px}
     .hero-inner{display:flex;align-items:flex-start;gap:14px}
     .hero-text{flex:1;min-width:0}
-    .hero h1{font-family:var(--font-head);font-size:clamp(1.55rem,5vw,2.1rem);font-weight:700;line-height:1.1;letter-spacing:-0.025em;text-wrap:balance}
+    .hero h1{font-family:var(--font-head);font-size:clamp(1.55rem,5vw,2.15rem);font-weight:700;line-height:1.1;letter-spacing:-0.025em;text-wrap:balance}
     .hero h1 .city{display:block;background:linear-gradient(130deg,var(--walk) 0%,#60D0FF 50%,var(--transit) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
     .hero-pills{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
     .pill{display:inline-flex;align-items:center;gap:5px;background:var(--chip);border:1px solid var(--border);border-radius:var(--radius-pill);padding:4px 11px;font-size:0.78rem;font-weight:500;color:var(--ink2)}
+    .pill.accent{background:var(--bus-bg);border-color:var(--bus-border);color:var(--bus)}
     .btn-theme{flex-shrink:0;width:42px;height:42px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:grid;place-items:center;color:var(--ink2);transition:transform var(--t) var(--ease),border-color var(--t) var(--ease),color var(--t) var(--ease),box-shadow var(--t) var(--ease);box-shadow:var(--shadow-sm)}
     .btn-theme:hover{transform:scale(1.08);border-color:var(--walk);color:var(--walk);box-shadow:var(--glow-walk)}
-    .tabs-wrap{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;padding-block:10px;border-bottom:1px solid var(--border);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px)}
-    [data-theme="dark"] .tabs-wrap{background:rgba(7,14,27,0.82)}
-    [data-theme="light"] .tabs-wrap{background:rgba(238,243,249,0.84)}
+    .tabs-wrap{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;padding-block:10px;border-bottom:1px solid var(--border);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px)}
+    [data-theme="dark"] .tabs-wrap{background:rgba(7,14,27,0.84)}
+    [data-theme="light"] .tabs-wrap{background:rgba(238,243,249,0.86)}
     .tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
     .tab{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:10px 6px;border-radius:var(--radius-sm);background:var(--surface);border:1px solid var(--border);color:var(--ink2);transition:background var(--t) var(--ease),border-color var(--t) var(--ease),color var(--t) var(--ease);overflow:hidden}
     .tab::after{content:'';position:absolute;bottom:0;left:10%;right:10%;height:3px;border-radius:3px 3px 0 0;background:linear-gradient(90deg,var(--walk),var(--transit));transform:scaleX(0);transition:transform var(--t) var(--ease)}
@@ -48,38 +88,118 @@
     #day{display:flex;flex-direction:column;gap:20px;padding-block:22px}
     @keyframes fadeSlideUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
     .day-animate{animation:fadeSlideUp 0.38s var(--ease) both}
-    .day-header{display:flex;flex-direction:column;gap:2px}
+    .day-header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px}
     .day-date{font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--walk)}
-    .day-title{font-family:var(--font-head);font-size:1.25rem;font-weight:700;letter-spacing:-0.015em}
+    .day-title{font-family:var(--font-head);font-size:1.28rem;font-weight:700;letter-spacing:-0.015em}
+    .day-cost{font-size:0.78rem;font-weight:600;color:var(--ink2);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-pill);padding:4px 12px}
+
+    /* Fare banner */
+    .fare-bar{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;display:flex;flex-direction:column;gap:6px;font-size:0.83rem;color:var(--ink2)}
+    .fare-bar strong{color:var(--ink)}
+    .fare-grid{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center}
+    .fare-badge{display:inline-flex;align-items:center;gap:6px;font-size:0.78rem;font-weight:600;padding:3px 9px;border-radius:var(--radius-pill);border:1px solid var(--border);background:var(--chip)}
+    .fare-badge.walk{color:var(--walk);border-color:rgba(56,189,248,0.28);background:rgba(56,189,248,0.08)}
+    .fare-badge.bus{color:var(--bus);border-color:var(--bus-border);background:var(--bus-bg)}
+    .fare-badge.tube{color:var(--transit);border-color:var(--warn-border);background:var(--warn-bg)}
+
+    /* Mapbox */
     .mapbox{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm)}
-    svg{display:block;width:100%;height:auto}
-    .legend{display:flex;flex-wrap:wrap;align-items:center;gap:6px 20px;padding:10px 16px;border-top:1px solid var(--border);font-size:0.78rem;color:var(--ink3)}
+    .map-toolbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;padding:10px 14px;border-bottom:1px solid var(--border);background:var(--bg2)}
+    .map-mode-group{display:inline-flex;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-pill);padding:3px;gap:2px}
+    .map-mode-btn{font-size:0.76rem;font-weight:600;padding:5px 12px;border-radius:var(--radius-pill);color:var(--ink2);transition:all var(--t) var(--ease)}
+    .map-mode-btn.active{background:var(--walk);color:var(--pin-ink)}
+    .map-toggle-food{display:inline-flex;align-items:center;gap:6px;font-size:0.76rem;font-weight:600;padding:6px 12px;border-radius:var(--radius-pill);border:1px solid var(--border);background:var(--surface);color:var(--ink2);transition:all var(--t) var(--ease)}
+    .map-toggle-food.active{border-color:var(--food-border);background:var(--food-bg);color:var(--food)}
+    .map-canvas{position:relative;width:100%;height:420px;background:var(--bg)}
+    .map-canvas.vector-mode{height:auto}
+    #leafletMap{width:100%;height:420px;z-index:1;background:var(--bg)}
+    .leaflet-container{font-family:var(--font-body);background:var(--bg)!important}
+    .leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--surface2);color:var(--ink);border:1px solid var(--border-h);box-shadow:var(--shadow)}
+    .leaflet-popup-content{margin:10px 12px;font-size:0.82rem;line-height:1.45}
+    .leaflet-popup-close-button{color:var(--ink2)!important}
+    .custom-pin{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--pin-bg);color:var(--pin-ink);border:2.5px solid var(--bg);font-weight:700;font-size:0.74rem;box-shadow:0 2px 10px rgba(0,0,0,0.5);transition:transform 0.15s ease}
+    .custom-pin.multi{width:auto;padding:0 8px;border-radius:14px}
+    .custom-pin.active{transform:scale(1.2);box-shadow:0 0 0 5px rgba(56,189,248,0.35),0 2px 12px rgba(0,0,0,0.6)}
+    .custom-pin.food-pin{width:22px;height:22px;background:var(--food);color:#090D16;font-size:0.7rem;border:2px solid var(--bg)}
+    svg.vec-map{display:block;width:100%;height:auto}
+    .legend{display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px;padding:10px 16px;border-top:1px solid var(--border);font-size:0.77rem;color:var(--ink3)}
     .leg-swatch{display:inline-flex;align-items:center;gap:7px}
     .swatch-line{width:22px;height:3px;border-radius:3px;background:var(--walk);flex-shrink:0}
-    .swatch-line.t{background:repeating-linear-gradient(90deg,var(--transit) 0,var(--transit) 5px,transparent 5px,transparent 10px)}
+    .swatch-line.b{background:repeating-linear-gradient(90deg,var(--bus) 0,var(--bus) 6px,transparent 6px,transparent 10px)}
+    .swatch-line.t{background:repeating-linear-gradient(90deg,var(--transit) 0,var(--transit) 4px,transparent 4px,transparent 8px)}
+    .swatch-dot{width:10px;height:10px;border-radius:50%;background:var(--food);flex-shrink:0}
+
+    /* Notes */
     .notes{background:var(--warn-bg);border:1px solid var(--warn-border);border-radius:var(--radius);padding:14px 16px}
     .notes-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
     .notes-head h3{font-family:var(--font-head);font-size:0.88rem;font-weight:600;color:var(--warn-ink)}
     .notes ul{list-style:none;display:flex;flex-direction:column;gap:8px}
-    .notes li{display:flex;gap:8px;font-size:0.86rem;color:var(--warn-ink);opacity:0.9;line-height:1.5}
+    .notes li{display:flex;gap:8px;font-size:0.85rem;color:var(--warn-ink);opacity:0.92;line-height:1.5}
     .notes li::before{content:'→';flex-shrink:0;color:var(--transit);font-weight:700;margin-top:1px}
+
+    /* Timeline */
     .tl{list-style:none;display:flex;flex-direction:column}
     .stop-item{display:flex;flex-direction:column}
     .stop{display:grid;grid-template-columns:36px minmax(0,1fr);gap:12px;padding:12px 10px;border-radius:var(--radius-sm);cursor:pointer;transition:background var(--t) var(--ease)}
     .stop:hover,.stop.on{background:var(--chip-h)}
     .stop.on .stop-name{color:var(--walk)}
+    .stop.is-meal{border:1px solid var(--food-border);background:rgba(251,191,36,0.035);margin-block:2px}
+    .stop.is-meal.on{background:rgba(251,191,36,0.08)}
     .pinno{width:34px;height:34px;border-radius:50%;background:var(--pin-bg);color:var(--pin-ink);display:grid;place-items:center;font-weight:700;font-size:0.8rem;font-variant-numeric:tabular-nums;flex-shrink:0;transition:transform var(--t) var(--ease),box-shadow var(--t) var(--ease)}
-    .stop.on .pinno{transform:scale(1.12);box-shadow:0 0 0 5px rgba(56,189,248,0.2)}
+    .stop.is-meal .pinno{background:var(--food);color:#090D16}
+    .stop.on .pinno{transform:scale(1.12);box-shadow:0 0 0 5px rgba(56,189,248,0.22)}
+    .stop-top{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:6px}
     .stop-name{font-weight:600;font-size:0.95rem;transition:color var(--t) var(--ease);line-height:1.35}
+    .stop-rate{font-size:0.73rem;font-weight:600;padding:2px 8px;border-radius:var(--radius-pill);background:var(--chip);border:1px solid var(--border);color:var(--ink2);font-variant-numeric:tabular-nums}
     .stop-time{font-variant-numeric:tabular-nums;color:var(--walk);font-weight:600;font-size:0.8rem;margin-top:2px}
-    .stop-desc{color:var(--ink2);font-size:0.86rem;margin-top:3px}
-    .leg{margin-left:29px;border-left:2px solid var(--walk);padding:6px 0 6px 20px;display:flex;flex-direction:column;gap:4px;font-size:0.85rem}
-    .leg.transit{border-left:2px dashed var(--transit)}
-    .leg-mode{font-weight:600;color:var(--ink2);display:flex;align-items:center;gap:6px}
-    .leg-dot{width:7px;height:7px;border-radius:50%;background:var(--walk);flex-shrink:0}
-    .leg.transit .leg-dot{background:var(--transit)}
-    .leg-how{color:var(--ink3);font-size:0.83rem;line-height:1.5}
-    .leg-flag{display:inline-flex;align-items:center;gap:5px;background:var(--warn-bg);border:1px solid var(--warn-border);border-radius:6px;padding:4px 10px;color:var(--warn-ink);font-size:0.8rem;align-self:flex-start;line-height:1.4}
+    .stop.is-meal .stop-time{color:var(--food)}
+    .stop-desc{color:var(--ink2);font-size:0.85rem;margin-top:3px}
+
+    /* Transit leg */
+    .leg{margin-left:28px;border-left:2px solid var(--walk);padding:8px 0 8px 18px;display:flex;flex-direction:column;gap:7px;font-size:0.84rem}
+    .leg.bus{border-left:2px dashed var(--bus)}
+    .leg.tube{border-left:2px dashed var(--transit)}
+    .leg-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 13px;display:flex;flex-direction:column;gap:6px}
+    .leg-header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px}
+    .leg-mode{font-weight:600;color:var(--ink);display:flex;align-items:center;gap:7px;font-size:0.83rem}
+    .leg-dot{width:8px;height:8px;border-radius:50%;background:var(--walk);flex-shrink:0}
+    .leg.bus .leg-dot{background:var(--bus)}
+    .leg.tube .leg-dot{background:var(--transit)}
+    .leg-price{font-size:0.74rem;font-weight:700;padding:2px 8px;border-radius:var(--radius-pill)}
+    .leg-price.free{background:rgba(56,189,248,0.12);color:var(--walk);border:1px solid rgba(56,189,248,0.28)}
+    .leg-price.cheapest{background:var(--bus-bg);color:var(--bus);border:1px solid var(--bus-border)}
+    .leg-price.tube-p{background:var(--warn-bg);color:var(--transit);border:1px solid var(--warn-border)}
+    .leg-steps{list-style:none;display:flex;flex-direction:column;gap:3px;color:var(--ink2);font-size:0.81rem;line-height:1.48}
+    .leg-steps li{display:flex;gap:6px}
+    .leg-steps li .step-n{color:var(--ink3);font-weight:700;font-variant-numeric:tabular-nums;flex-shrink:0}
+    .leg-alt{margin-top:2px;padding-top:7px;border-top:1px dashed var(--border);font-size:0.8rem;color:var(--ink2)}
+    .leg-alt-title{font-weight:600;color:var(--transit);margin-bottom:3px;display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap}
+    .leg-flag{display:inline-flex;align-items:center;gap:5px;background:var(--warn-bg);border:1px solid var(--warn-border);border-radius:6px;padding:4px 10px;color:var(--warn-ink);font-size:0.79rem;align-self:flex-start;line-height:1.4}
+
+    /* Food recommendations panel */
+    .food-panel{margin-left:46px;margin-top:4px;margin-bottom:8px;background:var(--surface);border:1px solid var(--food-border);border-radius:var(--radius);padding:13px 14px;display:flex;flex-direction:column;gap:10px}
+    .food-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}
+    .food-title{font-family:var(--font-head);font-size:0.88rem;font-weight:700;color:var(--food);display:flex;align-items:center;gap:6px}
+    .food-sub{font-size:0.76rem;color:var(--ink3)}
+    .food-filters{display:flex;flex-wrap:wrap;gap:5px}
+    .f-chip{font-size:0.73rem;font-weight:600;padding:4px 10px;border-radius:var(--radius-pill);border:1px solid var(--border);background:var(--chip);color:var(--ink2);transition:all var(--t) var(--ease)}
+    .f-chip:hover{background:var(--chip-h);color:var(--ink)}
+    .f-chip.active{background:var(--food);color:#090D16;border-color:var(--food)}
+    .food-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+    .food-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 11px;display:flex;flex-direction:column;gap:5px;transition:border-color var(--t) var(--ease),transform var(--t) var(--ease)}
+    .food-card:hover{border-color:var(--food-border);transform:translateY(-1px)}
+    .food-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:6px}
+    .food-name{font-weight:600;font-size:0.85rem;color:var(--ink);line-height:1.3}
+    .food-price{font-size:0.72rem;font-weight:700;color:var(--bus);background:var(--bus-bg);border:1px solid var(--bus-border);border-radius:var(--radius-pill);padding:1px 7px;white-space:nowrap}
+    .food-meta{display:flex;flex-wrap:wrap;gap:6px;font-size:0.73rem;color:var(--ink3)}
+    .food-tag{color:var(--food);font-weight:600}
+    .food-note{font-size:0.78rem;color:var(--ink2);line-height:1.42}
+    .food-actions{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:4px;font-size:0.75rem}
+    .food-map-btn{color:var(--walk);font-weight:600;padding:2px 0}
+    .food-gmaps{color:var(--ink2);font-weight:500}
+    .food-gmaps:hover{color:var(--walk);text-decoration:underline}
+
+    /* Links */
     .links-section{display:flex;flex-direction:column;gap:10px}
     .links-title{font-family:var(--font-head);font-size:0.9rem;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:0.06em}
     .links{display:flex;flex-direction:column;gap:8px}
@@ -88,7 +208,7 @@
     .map-link small{display:block;color:var(--ink3);font-weight:400;font-size:0.78rem;margin-top:2px}
     .map-link.main{background:var(--walk);color:var(--pin-ink);border-color:var(--walk);box-shadow:var(--glow-fab)}
     .map-link.main:hover{background:var(--walk2);border-color:var(--walk2)}
-    .map-link.main small{color:inherit;opacity:0.75}
+    .map-link.main small{color:inherit;opacity:0.78}
     .map-link-arrow{flex-shrink:0;opacity:0.65}
     .footer-note{color:var(--ink3);font-size:0.78rem;text-align:center;padding-block:4px 12px;line-height:1.65}
     .fab{position:fixed;bottom:max(28px,calc(env(safe-area-inset-bottom,0px) + 20px));right:max(20px,calc(env(safe-area-inset-right,0px) + 16px));z-index:50;display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--walk),var(--walk2));color:var(--pin-ink);border-radius:var(--radius-pill);padding:13px 20px;font-weight:700;font-size:0.86rem;font-family:inherit;box-shadow:var(--glow-fab);transition:transform var(--t) var(--ease),box-shadow var(--t) var(--ease);border:none;cursor:pointer}
@@ -96,6 +216,11 @@
     .fab:active{transform:translateY(-1px)}
     .toast{position:fixed;bottom:max(104px,calc(env(safe-area-inset-bottom,0px) + 100px));left:50%;transform:translateX(-50%) translateY(12px);background:var(--surface2);border:1px solid var(--border-h);border-radius:var(--radius-pill);padding:10px 22px;font-size:0.86rem;font-weight:600;color:var(--ink);box-shadow:var(--shadow);opacity:0;transition:opacity 0.28s var(--ease),transform 0.28s var(--ease);z-index:100;white-space:nowrap;pointer-events:none}
     .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    @media(max-width:600px){
+      .food-panel{margin-left:0}
+      .leg{margin-left:18px;padding-left:12px}
+      .map-canvas,#leafletMap{height:340px}
+    }
     @media(max-width:540px){.hero h1{font-size:1.45rem}.tab span{display:none}.tab b{font-size:0.85rem}.fab-label{display:none}.fab{padding:15px;border-radius:50%}}
     @media(max-width:360px){.tab b{font-size:0.75rem}.tab{padding:8px 4px}}
   </style>
@@ -108,8 +233,9 @@
           <h1><span class="city">London</span>December 2026</h1>
           <div class="hero-pills">
             <span class="pill">📍 Brick Lane, E1 6RL</span>
-            <span class="pill">🗓 1 – 4 Dec</span>
-            <span class="pill">4 days</span>
+            <span class="pill">🗓 1 – 4 Dec 2026</span>
+            <span class="pill">💷 Total Plan: £1,019.70</span>
+            <span class="pill accent">🚌 Bus £1.75–£1.85 Hopper · 🚇 Tube £3.00–£3.10</span>
           </div>
         </div>
         <button class="btn-theme" id="themeBtn" aria-label="Toggle light / dark theme">
@@ -125,94 +251,861 @@
   </div>
   <div class="page-wrap">
     <div id="day" role="tabpanel" aria-live="polite"></div>
-    <p class="footer-note">Maps are schematic — stops are plotted at real lat/lon positions, the river is approximate, and legs run straight between stops. Use the Google Maps links for true turn-by-turn routes. Times are estimates; check live journey times on the day.</p>
+    <p class="footer-note">Live Street Map uses OpenStreetMap / CartoDB Dark Matter tiles when online, with an offline realistic vector map showing the River Thames, bridges, Royal Parks, road corridors &amp; Tube stations. London Trams only serve South London (Croydon/Wimbledon), so transit legs compare the cheaper TfL Bus (£1.75–£1.85 Hopper within 60 min) against the Underground (£3.00 off-peak / £3.10 peak; Zone 1–2 daily cap £8.90).</p>
   </div>
   <button class="fab" id="shareBtn" aria-label="Share this page">
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
     <span class="fab-label">Share</span>
   </button>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script>
-var THAMES=[[51.4861,-0.1240],[51.4948,-0.1235],[51.5008,-0.1219],[51.5063,-0.1197],[51.5086,-0.1169],[51.5097,-0.1042],[51.5095,-0.0985],[51.5086,-0.0938],[51.5079,-0.0877],[51.5055,-0.0754],[51.5030,-0.0650],[51.5040,-0.0580]];
-var BL={n:'Brick Lane (E1 6RL)',q:'Brick Lane, London E1 6RL',ll:[51.5217,-0.0716]};
-var DAYS=[
-{tab:'Day 1',date:'Tue 1 Dec',title:'Victoria, Westminster and Covent Garden',
- notes:['Only free sights today, so the multi-attraction pass stays unused until the River Cruise on 2 Dec.','Check-in is 15:00. Ask the host for an early bag drop; if the answer is no, use bag storage near Aldgate East.','Sunset is about 15:55, so Covent Garden is lit by the time you arrive.'],
- stops:[
- {n:'Victoria Coach Station',q:'Victoria Coach Station, London SW1W 9TP',ll:[51.4936,-0.1488],t:'11:25',d:'Coach arrives. Walk 4 min to Victoria station with your bags.',leg:{m:'tube',min:35,how:'District line direct, Victoria to Aldgate East (about 27 min), then 6 min walk to Brick Lane.'}},
- {n:BL.n,q:BL.q,ll:BL.ll,t:'12:15\u201313:10',d:'Drop bags, then lunch on Brick Lane.',leg:{m:'tube',min:28,how:'Walk 6 min to Aldgate East, District line to Westminster (about 17 min), then 3 min to Parliament Square.'}},
- {n:'Big Ben and Parliament (exterior)',q:'Big Ben, London SW1A 0AA',ll:[51.5007,-0.1246],t:'13:45\u201314:15',d:'Parliament Square and the Westminster Bridge viewpoint.',leg:{m:'walk',min:3,how:'Cross Parliament Square to the Abbey, west side.'}},
- {n:'Westminster Abbey (exterior)',q:'Westminster Abbey, London SW1P 3PA',ll:[51.4994,-0.1275],t:'14:15\u201314:30',d:'Great West Door and the square.',leg:{m:'walk',min:14,how:'North along Whitehall, past the Cenotaph and Downing Street gates, to Horse Guards.'}},
- {n:'Horse Guards Parade',q:'Horse Guards Parade, London SW1A 2AX',ll:[51.5047,-0.1277],t:'14:45\u201315:10',d:'Mounted sentries at the Whitehall arch.',leg:{m:'walk',min:8,how:'Continue north on Whitehall to Trafalgar Square.'}},
- {n:'Trafalgar Square',q:'Trafalgar Square, London WC2N 5DN',ll:[51.5080,-0.1281],t:'15:20\u201315:50',d:"Christmas tree and Nelson's Column.",leg:{m:'walk',min:14,how:"North-east via St Martin's Lane and Long Acre to the Market."}},
- {n:'Covent Garden',q:'Covent Garden Market, London WC2E 8RF',ll:[51.5120,-0.1223],t:'16:05\u201317:45',d:'Market halls and Christmas lights after dark.',leg:{m:'tube',min:38,how:'Piccadilly line to Holborn (1 stop), Central line to Liverpool Street (about 8 min), then 12 min walk to Brick Lane.'}},
- {n:BL.n,q:BL.q,ll:BL.ll,t:'18:25',d:'Dinner on Brick Lane.'}]},
-{tab:'Day 2',date:'Wed 2 Dec',title:'Tower, River Cruise, Tower Bridge, Sky Garden',
- notes:['The official London Eye River Cruise leaves from London Eye Pier at Waterloo, sails a loop of about 40 min and makes no stops. It does not start at the Tower. Check your e-ticket for the boarding pier.','Your 12:00 exit from the Tower leaves too little time to reach the pier for 12:45. This plan leaves the Tower at 11:35, which keeps a short lunch before boarding.','The cruise should finish near 13:25, not 14:00, and Tower Bridge is about 32 min away. Leave the pier at 13:30 to arrive for 14:10. Tower Bridge last entry is 17:00, so confirm your ticket is not strictly timed in case you run late.','Sky Garden entry is 16:45. Arrive by 16:30 for security. Sunset is about 15:55, so the view is fully night.'],
- stops:[
- {n:BL.n,q:BL.q,ll:BL.ll,t:'08:50',d:'Leave after breakfast.',leg:{m:'tube',min:20,how:'Walk 6 min to Aldgate East, District line to Tower Hill (3 min), 5 min to the entrance.',flag:'Walking is about 28 min (2 km), so the Tube is recommended.'}},
- {n:'Tower of London',q:'Tower of London, London EC3N 4AB',ll:[51.5081,-0.0759],t:'09:30 arrive, in at 09:45, out 11:35',d:'Crown Jewels first, then the White Tower and walls. Bring the booking to the gate.',leg:{m:'tube',min:32,how:'Tower Hill, District or Circle line to Westminster (about 15 min), then walk over Westminster Bridge to County Hall and the pier (about 10 min).',flag:'Over 25 min on foot (5.5 km), so use the Tube.'}},
- {n:'London Eye Pier (County Hall)',q:'London Eye Pier, London SE1 7PB',ll:[51.5034,-0.1205],t:'12:15 arrive, lunch, board 12:45',d:'Grab lunch nearby before boarding. Cruise ends about 13:25.',leg:{m:'tube',min:32,how:'Walk 8 min to Waterloo, Jubilee line to London Bridge (4 min), then walk 15 min east along Tooley Street to Tower Bridge.',flag:'Tight. Leave the pier by 13:30.'}},
- {n:'Tower Bridge Exhibition',q:'Tower Bridge Exhibition, London SE1 2UP',ll:[51.5055,-0.0754],t:'14:10\u201315:40',d:'Glass walkway and engine rooms. Allow 90 min.',leg:{m:'walk',min:20,how:'Across Tower Bridge to the north bank, up Great Tower Street, then Eastcheap and Fenchurch Street. Leadenhall Market is a 2 min detour for a hot drink.'}},
- {n:'Sky Garden',q:'Sky Garden, 20 Fenchurch Street, London EC3M 8AF',ll:[51.5113,-0.0836],t:'Arrive 16:30, in 16:45\u201317:45',d:'Night view over the City and the river.',leg:{m:'walk',min:22,how:'North-east through Bishopsgate and Spitalfields to Brick Lane, about 1.6 km.'}},
- {n:BL.n,q:BL.q,ll:BL.ll,t:'18:10',d:'Dinner on Brick Lane.'}]},
-{tab:'Day 3',date:'Thu 3 Dec',title:"British Museum, Shrek's Adventure, London Eye",
- notes:["Thursday: Shrek's Adventure opens at 11:00. Listings disagree on the last entry for weekdays in the festive period (14:00 on one, 15:00 on another). Book a 14:15 slot only after checking shreksadventure.com. If the last entry is 14:00, leave the Museum by 12:40 and eat after.",'London Eye: some listings give 11:00\u201318:00 on winter weekdays. A 16:30 slot catches dusk (sunset about 15:55) and sits inside those hours.','The Museum end time is taken as 13:10 as you said. Leaving 20 min earlier makes lunch easier.'],
- stops:[
- {n:BL.n,q:BL.q,ll:BL.ll,t:'09:10',d:'Head west.',leg:{m:'tube',min:35,how:'Walk 12 min to Liverpool Street, Central line to Tottenham Court Road (about 11 min), then walk 8 min up to Great Russell Street.',flag:'Walking is about 55 min, so use the Tube.'}},
- {n:'British Museum',q:'British Museum, London WC1B 3DG',ll:[51.5194,-0.1270],t:'Arrive 09:55, in 10:10\u201313:10',d:'Fixed booking.',leg:{m:'tube',min:28,how:'Walk 9 min to Tottenham Court Road, Northern line (Charing Cross branch) to Embankment (about 7 min), then cross Golden Jubilee Bridge (10 min) to County Hall.'}},
- {n:"Shrek's Adventure (County Hall)",q:"Shrek's Adventure London, Westminster Bridge Road, London SE1 7PB",ll:[51.5019,-0.1197],t:'13:40 lunch, 14:15\u201315:45',d:'About 60 to 90 min. Lunch on the South Bank first.',leg:{m:'walk',min:4,how:'Along the riverside walk to the London Eye, directly next door. Use the free time for the riverside Christmas stalls if they are running.'}},
- {n:'London Eye',q:'London Eye, London SE1 7PB',ll:[51.5033,-0.1195],t:'Slot 16:30, off by about 17:05',d:'One rotation is about 30 min. Arrive 10 min before.',leg:{m:'tube',min:35,how:'Walk 10 min to Waterloo, Waterloo & City line to Bank (4 min), Central line one stop to Liverpool Street, then 12 min walk to Brick Lane.'}},
- {n:BL.n,q:BL.q,ll:BL.ll,t:'18:00',d:'Dinner on Brick Lane.'}]},
-{tab:'Day 4',date:'Fri 4 Dec',title:'Royal exteriors, Madame Tussauds, coach',
- notes:['You did not give the coach time. This plan assumes it leaves after 16:00 from Victoria Coach Station. If it leaves earlier, skip the park walk and go straight to Madame Tussauds.','Check-out is 11:00 and the first stop is Victoria, so book bag storage near Victoria Coach Station before you travel. Collect the bags at about 15:15.','Madame Tussauds entry is 12:30. Arrive at 12:15. Baker Street is the next Tube stop after the walk through the parks.'],
- stops:[
- {n:BL.n,q:BL.q,ll:BL.ll,t:'08:30',d:'Check out with your bags.',leg:{m:'tube',min:40,how:'Walk 6 min to Aldgate East, District line direct to Victoria (about 27 min), then 5 min to the storage point.'}},
- {n:'Victoria Coach Station (bag storage)',q:'Victoria Coach Station, London SW1W 9TP',ll:[51.4936,-0.1488],t:'09:10\u201309:30',d:'Drop the bags.',leg:{m:'walk',min:18,how:"Buckingham Gate and Birdcage Walk to the western end of St James's Park."}},
- {n:"St James's Park",q:"St James's Park, London SW1A 2BJ",ll:[51.5025,-0.1348],t:'09:50\u201310:20',d:'Blue Bridge and the lake, looking back to Horse Guards.',leg:{m:'walk',min:10,how:'Westward along the lake and The Mall to the Victoria Memorial.'}},
- {n:'Buckingham Palace (exterior)',q:'Buckingham Palace, London SW1A 1AA',ll:[51.5014,-0.1419],t:'10:30\u201310:55',d:'Forecourt railings and the Victoria Memorial. No entry.',leg:{m:'walk',min:10,how:"North through Green Park along Queen's Walk to Green Park station."}},
- {n:'Green Park Station',q:'Green Park Underground Station, London',ll:[51.5067,-0.1428],t:'11:05\u201311:45',d:'Lunch around Piccadilly or Berkeley Street.',leg:{m:'tube',min:15,how:'Jubilee line, Green Park to Baker Street (4 stops, about 8 min), then 4 min walk to Marylebone Road.'}},
- {n:'Madame Tussauds',q:'Madame Tussauds London, Marylebone Road, London NW1 5LR',ll:[51.5233,-0.1552],t:'Arrive 12:15, in 12:30\u201314:30',d:'Fixed booking, included in the pass.',leg:{m:'tube',min:25,how:'Walk 4 min to Baker Street, Bakerloo to Oxford Circus, Victoria line to Victoria (about 20 min), then 5 min back to the storage point.'}},
- {n:'Victoria Coach Station',q:'Victoria Coach Station, London SW1W 9TP',ll:[51.4936,-0.1488],t:'About 15:15',d:'Collect the bags and wait for the coach.'}]}
+
+<script>
+// Geographic backdrop data for the realistic Vector Map
+var THAMES_POLY=[
+  [51.4835,-0.1275],[51.4910,-0.1260],[51.4975,-0.1246],[51.5015,-0.1232],[51.5056,-0.1210],
+  [51.5082,-0.1172],[51.5094,-0.1100],[51.5093,-0.1030],[51.5086,-0.0955],[51.5078,-0.0880],
+  [51.5062,-0.0805],[51.5046,-0.0735],[51.5028,-0.0645],[51.5036,-0.0560],
+  [51.5010,-0.0560],[51.5002,-0.0645],[51.5020,-0.0735],[51.5036,-0.0805],
+  [51.5052,-0.0880],[51.5060,-0.0955],[51.5067,-0.1030],[51.5068,-0.1100],
+  [51.5058,-0.1165],[51.5034,-0.1195],[51.4998,-0.1214],[51.4960,-0.1226],
+  [51.4895,-0.1238],[51.4835,-0.1250]
 ];
+var BRIDGES=[
+  {n:'Westminster Br',a:[51.5010,-0.1238],b:[51.5008,-0.1198]},
+  {n:'Golden Jubilee',a:[51.5074,-0.1210],b:[51.5048,-0.1176]},
+  {n:'Waterloo Br',a:[51.5092,-0.1168],b:[51.5065,-0.1148]},
+  {n:'Blackfriars Br',a:[51.5105,-0.1045],b:[51.5074,-0.1043]},
+  {n:'London Br',a:[51.5092,-0.0879],b:[51.5060,-0.0875]},
+  {n:'Tower Br',a:[51.5068,-0.0755],b:[51.5036,-0.0753]}
+];
+var PARKS=[
+  {n:"St James's Park",pts:[[51.5046,-0.1404],[51.5043,-0.1298],[51.5005,-0.1304],[51.5009,-0.1412]]},
+  {n:'Green Park',pts:[[51.5072,-0.1492],[51.5069,-0.1418],[51.5022,-0.1418],[51.5024,-0.1495]]},
+  {n:'Hyde Park',pts:[[51.5120,-0.1750],[51.5112,-0.1520],[51.5025,-0.1518],[51.5028,-0.1760]]},
+  {n:"Regent's Park",pts:[[51.5355,-0.1650],[51.5355,-0.1460],[51.5245,-0.1455],[51.5245,-0.1645]]},
+  {n:'Russell Sq',pts:[[51.5228,-0.1270],[51.5228,-0.1246],[51.5208,-0.1246],[51.5208,-0.1270]]},
+  {n:"Lincoln's Inn",pts:[[51.5172,-0.1180],[51.5172,-0.1150],[51.5150,-0.1150],[51.5150,-0.1180]]}
+];
+var ROADS=[
+  [[51.5138,-0.1580],[51.5160,-0.1305],[51.5180,-0.1130],[51.5178,-0.0970],[51.5190,-0.0815]], // Oxford St -> Holborn -> Liverpool St
+  [[51.5030,-0.1520],[51.5082,-0.1390],[51.5100,-0.1338],[51.5095,-0.1260],[51.5115,-0.1165],[51.5136,-0.1040],[51.5134,-0.0888]], // Piccadilly -> Strand -> Fleet St -> Bank
+  [[51.4965,-0.1435],[51.4995,-0.1300],[51.5008,-0.1245],[51.5080,-0.1278]], // Victoria St -> Whitehall -> Trafalgar Sq
+  [[51.5225,-0.1560],[51.5262,-0.1380],[51.5290,-0.1250]], // Marylebone / Euston Rd
+  [[51.5225,-0.1560],[51.5345,-0.1680],[51.5475,-0.1805]], // Baker St -> Park Rd -> Finchley Rd
+  [[51.5150,-0.0815],[51.5162,-0.0715],[51.5190,-0.0610]], // Whitechapel Rd
+  [[51.5260,-0.0775],[51.5152,-0.0725],[51.5080,-0.0755]], // Shoreditch -> Brick Lane -> Tower Hill
+  [[51.5048,-0.0865],[51.5042,-0.0754],[51.5030,-0.1140]] // Tooley St / South Bank
+];
+var TUBE_STNS=[
+  {n:'Victoria',ll:[51.4965,-0.1447]},{n:'St James Park',ll:[51.4994,-0.1335]},
+  {n:'Westminster',ll:[51.5010,-0.1254]},{n:'Green Park',ll:[51.5067,-0.1428]},
+  {n:'Piccadilly C',ll:[51.5098,-0.1342]},{n:'Embankment',ll:[51.5074,-0.1223]},
+  {n:'Waterloo',ll:[51.5036,-0.1143]},{n:'Tottenham Ct Rd',ll:[51.5165,-0.1310]},
+  {n:'Holborn',ll:[51.5174,-0.1200]},{n:'Bank',ll:[51.5133,-0.0886]},
+  {n:'Liverpool St',ll:[51.5178,-0.0823]},{n:'Aldgate East',ll:[51.5154,-0.0726]},
+  {n:'Tower Hill',ll:[51.5098,-0.0766]},{n:'London Bridge',ll:[51.5052,-0.0864]},
+  {n:'Baker St',ll:[51.5226,-0.1571]},{n:'Finchley Rd',ll:[51.5472,-0.1803]}
+];
+var NEIGHBORHOODS=[
+  {n:'WESTMINSTER',ll:[51.4985,-0.1345]},{n:'MAYFAIR',ll:[51.5095,-0.1475]},
+  {n:'SOHO',ll:[51.5135,-0.1340]},{n:'COVENT GARDEN',ll:[51.5132,-0.1225]},
+  {n:'BLOOMSBURY',ll:[51.5225,-0.1265]},{n:'THE CITY',ll:[51.5145,-0.0930]},
+  {n:'BRICK LANE / E1',ll:[51.5218,-0.0715]},{n:'SOUTH BANK',ll:[51.5050,-0.1135]},
+  {n:'MARYLEBONE',ll:[51.5205,-0.1530]},{n:'SOUTH HAMPSTEAD',ll:[51.5440,-0.1790]}
+];
+
+var BL={n:'Brick Lane AirBnB (E1 6RL)',q:'Brick Lane, London E1 6RL',ll:[51.5217,-0.0716]};
+
+var DAYS=[
+{
+  tab:'Day 1',date:'Tue 1 Dec 2026',title:'Arrival, Brick Lane Lunch, Westminster & Covent Garden',total:'£430.00',
+  notes:[
+    'London Trams only run in South London (Croydon/Wimbledon), so Zone 1–2 legs compare TfL Bus (£1.75–£1.85 Hopper within 60 min) against the Tube (£3.00 off-peak / £3.10 peak) or Walking (£0).',
+    'Airbnb stay is 01/12–04/12 (£345). Standard check-in is often afternoon—confirm your 12:15 bag drop with the host beforehand; otherwise use luggage storage near Aldgate East/Liverpool St.',
+    'Only free sights today, keeping your attraction pass unused until Day 2. Sunset is ~15:55, so Trafalgar Square and Covent Garden are lit up for Christmas.'
+  ],
+  stops:[
+    {n:'Coach to London · Victoria Coach Station',q:'Victoria Coach Station, London SW1W 9TP',ll:[51.4936,-0.1488],t:'06:45 – 11:25 (Arrive)',rate:'£40.00',d:'Overnight/morning coach arrives at Victoria Coach Station at 11:25.',
+     leg:{
+       cheapMode:'bus',cheapLabel:'Cheapest: Bus 26',cheapPrice:'£1.75–£1.85',cheapMin:48,
+       steps:[
+         'Walk 5 min northeast out of Victoria Coach Station to Victoria Station (Stop J on Buckingham Palace Rd).',
+         'Board TfL Bus 26 towards Hackney Wick (passes Trafalgar Square, St Paul’s & Bank).',
+         'Tap in once with contactless/Oyster (£1.75–£1.85 Hopper fare; no tap-out needed).',
+         'Alight at Liverpool Street Station (Stop W) and walk 10–12 min east via Middlesex St & Wentworth St to Brick Lane E1 6RL.'
+       ],
+       altMode:'tube',altLabel:'Faster with luggage: District Line Tube',altPrice:'£3.00 off-peak · 35 min',
+       altSteps:'Walk 4 min to Victoria Underground → District line eastbound (towards Upminster/Barking) direct to Aldgate East (~25 min) → 6 min walk north up Brick Lane.',
+       flag:'Bus 26 is £1.25 cheaper, but with suitcases and a 12:15 target, the direct District Line is 13 min faster.',
+       path:[[51.4936,-0.1488],[51.4965,-0.1447],[51.5010,-0.1254],[51.5112,-0.1045],[51.5178,-0.0823],[51.5217,-0.0716]]
+     }},
+    {n:BL.n,q:BL.q,ll:BL.ll,t:'12:15 – 12:30 (Drop bags)',rate:'£345 (3 nights)',d:'Drop bags at the Airbnb before heading right onto Brick Lane for lunch.'},
+    {n:'Lunch near Brick Lane',q:'Brick Lane, London E1 6RL',ll:[51.5215,-0.0714],t:'12:30 – 13:30',rate:'£30.00 budget',isMeal:true,d:'Walkable budget lunch spots right off Brick Lane & Spitalfields (before heading to Westminster for 14:00).',
+     foods:[
+       {name:'Graam Bangla',cuisine:'Indian',cat:'Indian',walk:'1 min walk (68 Brick Ln)',price:'£8–£12',note:'Ultra-authentic Bangladeshi curries, fish dishes & biryani right on Brick Lane.',ll:[51.5193,-0.0715],q:'Graam Bangla, 68 Brick Lane, London'},
+       {name:'The Monsoon',cuisine:'Indian',cat:'Indian',walk:'1 min walk (78 Brick Ln)',price:'£10–£14',note:'Popular Brick Lane curry house with budget lunch specials & generous portions.',ll:[51.5197,-0.0715],q:'The Monsoon, 78 Brick Lane, London'},
+       {name:'Beigel Bake',cuisine:'Fast Food',cat:'Fast Food',walk:'2 min walk (159 Brick Ln)',price:'£4–£7',note:'Iconic 24/7 East London bakery—hot salt beef bagels with mustard or smoked salmon.',ll:[51.5244,-0.0717],q:'Beigel Bake, 159 Brick Lane, London'},
+       {name:'Roti King Spitalfields',cuisine:'Asian',cat:'Asian',walk:'6 min walk (4 Artillery Ln)',price:'£8–£12',note:'Legendary Malaysian street food—flaky roti canai with curry & mee goreng.',ll:[51.5184,-0.0772],q:'Roti King Spitalfields, 4 Artillery Lane, London'},
+       {name:'Wok N Roll',cuisine:'Asian',cat:'Asian',walk:'2 min walk (61 Hanbury St)',price:'£7–£10',note:'Quick East Asian noodle boxes, stir-fries & rice bowls just off Brick Lane.',ll:[51.5204,-0.0710],q:'Wok N Roll, 61 Hanbury Street, London'},
+       {name:'Bleecker Burger',cuisine:'Burger / American',cat:'Burger',walk:'5 min walk (Spitalfields Mkt)',price:'£10–£14',note:'Top-tier double cheeseburgers & fries inside Old Spitalfields Market.',ll:[51.5196,-0.0752],q:'Bleecker Burger, Old Spitalfields Market, London'},
+       {name:'Detroit Pizza / Slice Stalls',cuisine:'Pizza',cat:'Pizza',walk:'5 min walk (Spitalfields)',price:'£6–£10',note:'Thick-crust Detroit pizza slices & street food stalls around Commercial St/Spitalfields.',ll:[51.5199,-0.0748],q:'Old Spitalfields Market Pizza, London'}
+     ],
+     leg:{
+       cheapMode:'bus',cheapLabel:'Cheapest: Bus 26',cheapPrice:'£1.75–£1.85',cheapMin:38,
+       steps:[
+         'Walk 10 min west via Brushfield St to Liverpool Street Station (Stop F on Bishopsgate).',
+         'Board TfL Bus 26 towards Victoria (runs via Bank, St Paul’s, Fleet St & Whitehall).',
+         'Alight at Parliament Square / Westminster Abbey (Stop P), then walk 2 min to Big Ben.'
+       ],
+       altMode:'tube',altLabel:'Faster for 14:00 slot: District Line Tube',altPrice:'£3.00 off-peak · 28 min',
+       altSteps:'Walk 6 min south to Aldgate East → District line westbound direct to Westminster (~17 min) → Exit onto Bridge St right beneath Big Ben.',
+       flag:'Leaving at 13:30 gives only 30 min to reach Big Ben for 14:00—take the District Line Tube to arrive on time.',
+       path:[[51.5215,-0.0714],[51.5154,-0.0726],[51.5098,-0.0766],[51.5105,-0.1045],[51.5007,-0.1246]]
+     }},
+    {n:'Big Ben & Houses of Parliament',q:'Big Ben, London SW1A 0AA',ll:[51.5007,-0.1246],t:'14:00 – 14:50',rate:'£0 (Free)',d:'Parliament Square, Elizabeth Tower, and the classic Westminster Bridge viewpoint.',
+     leg:{
+       cheapMode:'walk',cheapLabel:'Cheapest & Fastest: Walk',cheapPrice:'£0 (Free)',cheapMin:3,
+       steps:['Cross Parliament Square southwest directly to Westminster Abbey’s Great West Door (250 m).'],
+       path:[[51.5007,-0.1246],[51.4994,-0.1275]]
+     }},
+    {n:'Westminster Abbey (exterior)',q:'Westminster Abbey, London SW1P 3PA',ll:[51.4994,-0.1275],t:'15:00 – 15:30',rate:'£0 (Free)',d:'Admire the Gothic Great West Door, Dean’s Yard & St Margaret’s Church.',
+     leg:{
+       cheapMode:'walk',cheapLabel:'Cheapest & Fastest: Walk',cheapPrice:'£0 (Free)',cheapMin:12,
+       steps:['Walk north along Parliament Street into Whitehall, passing the Cenotaph and Downing Street gates, to Horse Guards Arch.'],
+       path:[[51.4994,-0.1275],[51.5024,-0.1262],[51.5047,-0.1277]]
+     }},
+    {n:'Horse Guards Parade',q:'Horse Guards Parade, London SW1A 2AX',ll:[51.5047,-0.1277],t:'15:45 – 16:15',rate:'£0 (Free)',d:'Mounted Household Cavalry sentries at the Whitehall arch and parade ground.',
+     leg:{
+       cheapMode:'walk',cheapLabel:'Cheapest & Fastest: Walk',cheapPrice:'£0 (Free)',cheapMin:8,
+       steps:['Continue straight north up Whitehall directly into Trafalgar Square.'],
+       path:[[51.5047,-0.1277],[51.5080,-0.1281]]
+     }},
+    {n:'Trafalgar Square',q:'Trafalgar Square, London WC2N 5DN',ll:[51.5080,-0.1281],t:'16:30 – 17:00',rate:'£0 (Free)',d:'Norwegian Christmas tree, fountains, and Nelson’s Column lit up after dusk (~15:55).',
+     leg:{
+       cheapMode:'walk',cheapLabel:'Cheapest & Fastest: Walk',cheapPrice:'£0 (Free)',cheapMin:11,
+       steps:['Head northeast past St Martin-in-the-Fields along St Martin’s Lane, turn right onto Long Acre, and enter Covent Garden Market via James St.'],
+       path:[[51.5080,-0.1281],[51.5105,-0.1264],[51.5120,-0.1223]]
+     }},
+    {n:'Covent Garden',q:'Covent Garden Market, London WC2E 8RF',ll:[51.5120,-0.1223],t:'17:15 – 19:00',rate:'£0 (Free)',d:'Festive Piazza, giant Christmas tree, street performers, and Apple Market halls.',
+     leg:{
+       cheapMode:'bus',cheapLabel:'Cheapest: Bus 26',cheapPrice:'£1.75–£1.85',cheapMin:36,
+       steps:[
+         'Walk 5 min south via Southampton St to Aldwych / Strand (Stop S).',
+         'Board TfL Bus 26 towards Hackney Wick (via Fleet St, St Paul’s & Bank).',
+         'Alight at Liverpool Street Station (Stop W) and walk 10–12 min east to Brick Lane E1 6RL.'
+       ],
+       altMode:'tube',altLabel:'Faster alternative: Piccadilly → Central Line',altPrice:'£3.00 off-peak · 30 min',
+       altSteps:'Covent Garden Underground → Piccadilly line 1 stop to Holborn → Central line eastbound to Liverpool Street (~8 min) → 12 min walk east.',
+       path:[[51.5120,-0.1223],[51.5122,-0.1170],[51.5136,-0.1040],[51.5178,-0.0823],[51.5217,-0.0716]]
+     }},
+    {n:'Dinner · Brick Lane AirBnB',q:BL.q,ll:BL.ll,t:'19:45 – 20:45',rate:'£15.00',d:'Relaxed dinner back at Brick Lane AirBnB (or grab a £5–£7 bagel/curry nearby).'}
+  ]
+},
+{
+  tab:'Day 2',date:'Wed 2 Dec 2026',title:'Tower of London, Lunch, Tower Bridge, River Cruise & Sky Garden',total:'£294.70',
+  notes:[
+    'New timing order: Tower of London (09:30–11:30) → Lunch (12:00–12:30) → Tower Bridge (12:30–14:15) → River Cruise (14:45–15:30) → Sky Garden (16:45–17:45).',
+    'River Cruise check: The London Eye River Cruise departs from London Eye Pier (Waterloo), whereas City Cruises / Uber Boat also depart from Tower Pier right next to Tower Bridge. Check your e-ticket! If it boards at London Eye Pier, exit Tower Bridge promptly at 14:15.',
+    'Sky Garden entry is 16:45—arrive by 16:30 for airport-style security with your booking & photo ID.'
+  ],
+  stops:[
+    {n:'Breakfast · Brick Lane AirBnB',q:BL.q,ll:BL.ll,t:'08:00 – 09:00',rate:'£15.00',d:'Breakfast at Brick Lane before heading south to the Tower of London.',
+     leg:{
+       cheapMode:'walk',cheapLabel:'Cheapest: Walk direct',cheapPrice:'£0 (Free)',cheapMin:24,
+       steps:[
+         'Walk south down Brick Lane across Whitechapel High St into Osborn St.',
+         'Continue straight south down Mansell St & Minories past Tower Hill station directly to the Tower of London entrance (~2.0 km).'
+       ],
+       altMode:'bus',altLabel:'Cheap Bus option: Bus 15 (saves legs)',altPrice:'£1.75–£1.85 · 15 min',
+       altSteps:'Walk 6 min to Aldgate East / St Botolph St (Stop B) → Bus 15 towards Trafalgar Sq (2 stops) → Alight at Tower of London (Stop H). (District Line from Aldgate East to Tower Hill is £3.10 peak).',
+       path:[[51.5217,-0.0716],[51.5154,-0.0726],[51.5098,-0.0766],[51.5081,-0.0759]]
+     }},
+    {n:'Tower of London',q:'Tower of London, London EC3N 4AB',ll:[51.5081,-0.0759],t:'09:30 – 11:30',rate:'£144.30',d:'Head straight for the Crown Jewels first, then explore the White Tower, Medieval Palace & battlements.'},
+    {n:'Lunch near Tower of London',q:'Tower Hill, London EC3N 4AB',ll:[51.5096,-0.0764],t:'12:00 – 12:30',rate:'£30.00 budget',isMeal:true,d:'Quick 30-min lunch window right beside Tower Hill / Minories before walking onto Tower Bridge at 12:30.',
+     foods:[
+       {name:'The Liberty Bounds (Wetherspoons)',cuisine:'Burger / Pizza / Pub',cat:'Burger',walk:'3 min walk (15 Trinity Sq)',price:'£7–£11',note:'Fastest rock-bottom lunch right by Tower Hill—order burgers or pizzas on the app to your table.',ll:[51.5101,-0.0772],q:'The Liberty Bounds, 15 Trinity Square, London'},
+       {name:'Wrapchic Tower Hill',cuisine:'Indian Fusion / Fast Food',cat:'Indian',walk:'6 min walk (Aldgate/Tower Hill)',price:'£7–£10',note:'Indian-Mexican burritos, chicken tikka wraps & rice bowls—very quick counter service.',ll:[51.5125,-0.0760],q:'Wrapchic Tower Hill, London'},
+       {name:'Crispies Tower Hill',cuisine:'Fast Food / Burgers',cat:'Fast Food',walk:'4 min walk (Tower Hill/Minories)',price:'£6–£9',note:'Casual grab-and-go fried chicken, burgers & quick bites.',ll:[51.5112,-0.0753],q:'Crispies Tower Hill, London'},
+       {name:'The Minories',cuisine:'American / Burgers',cat:'Burger',walk:'6 min walk (64–73 Minories)',price:'£10–£14',note:'Casual pub dining right up Minories serving burgers, loaded fries & quick lunch plates.',ll:[51.5118,-0.0748],q:'The Minories, 64 Minories, London'},
+       {name:'Pizza Union Aldgate',cuisine:'Pizza',cat:'Pizza',walk:'9 min walk (25 Sandy\'s Row / Aldgate)',price:'£6–£9',note:'Super-fast 12" stone-baked Roman pizzas cooked in 3 minutes—great value.',ll:[51.5150,-0.0768],q:'Pizza Union Aldgate, London'},
+       {name:'Itsu / Wasabi (Tower Hill)',cuisine:'Asian',cat:'Asian',walk:'4 min walk (Tower Place / Fenchurch)',price:'£7–£10',note:'Hot chicken katsu curry, gyoza noodles & sushi boxes ready immediately.',ll:[51.5094,-0.0802],q:'Itsu Tower Place, London'}
+     ],
+     leg:{
+       cheapMode:'walk',cheapLabel:'Cheapest & Fastest: Walk',cheapPrice:'£0 (Free)',cheapMin:6,
+       steps:['Walk south along Tower Bridge Approach past the Tower moat directly onto Tower Bridge North Tower entrance.'],
+       path:[[51.5096,-0.0764],[51.5055,-0.0754]]
+     }},
+    {n:'Tower Bridge Exhibition',q:'Tower Bridge Exhibition, London SE1 2UP',ll:[51.5055,-0.0754],t:'12:30 – 14:15',rate:'£50.40',d:'High-level glass walkways over the Thames & Victorian engine rooms.',
+     leg:{
+       cheapMode:'bus',cheapLabel:'Cheapest: Bus 381',cheapPrice:'£1.75–£1.85',cheapMin:30,
+       steps:[
+         'Exit Tower Bridge southwards onto Tooley Street (4 min walk west to Stop H / Bermondsey St).',
+         'Board TfL Bus 381 towards County Hall / Waterloo via London Bridge & Southwark.',
+         'Alight at County Hall / Westminster Bridge right beside London Eye Pier.'
+       ],
+       altMode:'tube',altLabel:'Faster for 14:45 cruise: Jubilee Line',altPrice:'£3.00 off-peak · 25 min',
+       altSteps:'Walk 12 min west along Tooley St to London Bridge Underground → Jubilee line westbound to Waterloo (4 min) → 6 min walk to London Eye Pier. (If your cruise departs from Tower Pier, walk 6 min west from Tower Bridge for £0!).',
+       flag:'Only 30 min between Tower Bridge (14:15) and Cruise (14:45)—take the Tube if your pier is London Eye Pier!',
+       path:[[51.5055,-0.0754],[51.5052,-0.0864],[51.5046,-0.1010],[51.5036,-0.1143],[51.5034,-0.1205]]
+     }},
+    {n:'River Cruise · London Eye Pier',q:'London Eye Pier, London SE1 7PB',ll:[51.5034,-0.1205],t:'14:45 – 15:30',rate:'£40.00',d:'40–45 min sightseeing cruise on the Thames (verify boarding pier on your e-ticket).',
+     leg:{
+       cheapMode:'bus',cheapLabel:'Cheapest: Walk + Bus 15',cheapPrice:'£1.75–£1.85',cheapMin:34,
+       steps:[
+         'Walk 10 min north across Golden Jubilee Footbridge or Westminster Bridge to Trafalgar Square / Charing Cross.',
+         'Board TfL Bus 15 towards Blackwall along the Strand & Cannon St.',
+         'Alight at Monument Station (Stop H) and walk 3 min north up Philpot Lane to 20 Fenchurch St (Sky Garden).'
+       ],
+       altMode:'tube',altLabel:'Faster Tube option: Waterloo & City Line',altPrice:'£3.10 (after 16:00) · 22 min',
+       altSteps:'Walk 6 min to Waterloo → Waterloo & City line direct to Bank (4 min) → Walk 6 min east along Lombard St / Fenchurch St.',
+       path:[[51.5034,-0.1205],[51.5078,-0.1255],[51.5112,-0.1155],[51.5115,-0.0950],[51.5113,-0.0836]]
+     }},
+    {n:'Sky Garden (20 Fenchurch St)',q:'Sky Garden, 20 Fenchurch Street, London EC3M 8AF',ll:[51.5113,-0.0836],t:'16:45 – 17:45',rate:'£0 (Free booking)',d:'35th-floor indoor tropical garden & panoramic night skyline over the City and Thames.',
+     leg:{
+       cheapMode:'walk',cheapLabel:'Cheapest: Walk direct',cheapPrice:'£0 (Free)',cheapMin:22,
+       steps:[
+         'Walk northeast along Fenchurch St onto Aldgate High St and Whitechapel High St.',
+         'Turn left onto Brick Lane and walk north to E1 6RL (~1.6 km). (Or hop on Bus 25/205 from Aldgate for £1.75–£1.85).'
+       ],
+       path:[[51.5113,-0.0836],[51.5142,-0.0755],[51.5162,-0.0720],[51.5217,-0.0716]]
+     }},
+    {n:'Dinner · Brick Lane AirBnB',q:BL.q,ll:BL.ll,t:'18:30 – 20:00',rate:'£15.00',d:'Dinner back at Brick Lane AirBnB.'}
+  ]
+},
+{
+  tab:'Day 3',date:'Thu 3 Dec 2026',title:"British Museum, Bloomsbury Lunch, Shrek's Adventure & London Eye",total:'£140.00',
+  notes:[
+    "Bonus for Thursday 3 Dec: Bloomsbury Farmers' Market runs every Thursday (09:00–14:00) at Torrington Square, 6 min from the British Museum, with ~20 hot street-food stalls (£7–£10)!",
+    "Shrek's Adventure is 14:30–16:00; allow ~30 min after leaving the British Museum at 13:00 for a quick lunch or takeaway near Great Russell St.",
+    'London Eye slot at 16:30 catches full dusk/night illuminations (sunset ~15:55) right next door to County Hall.'
+  ],
+  stops:[
+    {n:'Breakfast · Brick Lane AirBnB',q:BL.q,ll:BL.ll,t:'08:00 – 09:15',rate:'£15.00',d:'Breakfast at Brick Lane before heading west to Bloomsbury.',
+     leg:{
+       cheapMode:'bus',cheapLabel:'Cheapest: Bus 8',cheapPrice:'£1.75–£1.85',cheapMin:38,
+       steps:[
+         'Walk 8 min northwest to Shoreditch High St / Bethnal Green Rd (or Liverpool St Bishopsgate Stop F).',
+         'Board TfL Bus 8 towards Tottenham Court Road (runs via Bank, St Paul’s & Holborn).',
+         'Alight at Museum Street / New Oxford St and walk 4 min north to the British Museum main gate.'
+       ],
+       altMode:'tube',altLabel:'Faster Tube option: Central Line',altPrice:'£3.00 (after 09:30) · 32 min',
+       altSteps:'Walk 12 min to Liverpool Street → Central line westbound to Tottenham Court Road (~10 min) → 7 min walk northeast via Great Russell St.',
+       path:[[51.5217,-0.0716],[51.5178,-0.0823],[51.5174,-0.1200],[51.5165,-0.1310],[51.5194,-0.1270]]
+     }},
+    {n:'British Museum',q:'British Museum, London WC1B 3DG',ll:[51.5194,-0.1270],t:'10:00 – 13:00',rate:'£0 (Free)',d:'Rosetta Stone, Parthenon sculptures, Egyptian mummies & Great Court.'},
+    {n:'Lunch near British Museum',q:'Great Russell Street, London WC1B 3DG',ll:[51.5180,-0.1276],t:'13:00 – 14:00',rate:'£30.00 budget',isMeal:true,d:'Walkable budget lunches right around Bloomsbury, Great Russell St & Tottenham Court Rd.',
+     foods:[
+       {name:'Seoul Bakery',cuisine:'Asian (Korean)',cat:'Asian',walk:'2 min walk (14 Great Russell St)',price:'£8–£11',note:'Cult-favorite tiny Korean café—bibimbap, bulgogi & kimbap. (Often cash-preferred, bring £15 cash).',ll:[51.5173,-0.1287],q:'Seoul Bakery, 14 Great Russell Street, London'},
+       {name:'Bloomsbury Farmers’ Market (Thu)',cuisine:'Street Food Mix',cat:'Fast Food',walk:'6 min walk (Torrington Sq)',price:'£7–£10',note:'Open Thursdays 09:00–14:00! ~20 hot street food stalls (Indian, Asian, burgers, falafel).',ll:[51.5223,-0.1304],q:'Bloomsbury Farmers Market, Torrington Square, London'},
+       {name:'Indian YMCA Restaurant',cuisine:'Indian',cat:'Indian',walk:'12 min walk (41 Fitzroy Sq)',price:'£8–£11',note:'Legendary student canteen serving authentic, ultra-affordable South & North Indian curries and thalis.',ll:[51.5228,-0.1399],q:'Indian YMCA Restaurant, 41 Fitzroy Square, London'},
+       {name:'Pizza Union Holborn',cuisine:'Pizza',cat:'Pizza',walk:'6 min walk (1 New Oxford St)',price:'£6–£9',note:'Crispy 12" fire-baked Roman pizzas cooked in 3 mins—super fast before Shrek’s Adventure.',ll:[51.5173,-0.1230],q:'Pizza Union Holborn, 1 New Oxford Street, London'},
+       {name:'Homeslice Neal’s Yard',cuisine:'Pizza',cat:'Pizza',walk:'9 min walk (13 Neal\'s Yard)',price:'£6–£8/slice',note:'Massive wood-fired 20" pizza sold by the giant slice in colourful Neal’s Yard.',ll:[51.5145,-0.1264],q:'Homeslice, 13 Neals Yard, London'},
+       {name:'Hare & Tortoise (Brunswick)',cuisine:'Asian',cat:'Asian',walk:'10 min walk (Brunswick Centre)',price:'£10–£14',note:'Generous pan-Asian bowls—katsu curry, ramen, sushi & pad thai.',ll:[51.5244,-0.1243],q:'Hare and Tortoise, Brunswick Centre, London'},
+       {name:'Honest Burgers / McDonald’s TCR',cuisine:'Burger / American',cat:'Burger',walk:'6 min walk (Tottenham Ct Rd)',price:'£6–£14',note:'McDonald’s for quick £6–£8 meal, or Honest Burgers Soho/TCR for smashed burgers & rosemary fries.',ll:[51.5162,-0.1312],q:'Tottenham Court Road McDonalds, London'}
+     ],
+     leg:{
+       cheapMode:'bus',cheapLabel:'Cheapest: Bus 1 (or 59 / 68)',cheapPrice:'£1.75–£1.85',cheapMin:22,
+       steps:[
+         'Walk 3 min south to New Oxford St / Southampton Row (Stop Y / C).',
+         'Board TfL Bus 1 towards Canada Water (or 59/68 towards Waterloo) across Waterloo Bridge.',
+         'Alight at Waterloo Station / Tenison Way and walk 5 min west along York Rd / Belvedere Rd to County Hall.'
+       ],
+       altMode:'tube',altLabel:'Tube option: Northern Line',altPrice:'£3.00 off-peak · 24 min',
+       altSteps:'Walk 7 min to Tottenham Court Road → Northern line southbound (Charing Cross branch) to Embankment (6 min) → Walk 8 min across Golden Jubilee Bridge.',
+       path:[[51.5180,-0.1276],[51.5168,-0.1225],[51.5092,-0.1168],[51.5036,-0.1143],[51.5019,-0.1197]]
+     }},
+    {n:"Shrek's Adventure! London (County Hall)",q:"Shrek's Adventure London, Westminster Bridge Road, London SE1 7PB",ll:[51.5019,-0.1197],t:'14:30 – 16:00',rate:'£40.00',d:'Interactive DreamWorks walkthrough & 4D bus ride inside County Hall (60–90 min).',
+     leg:{
+       cheapMode:'walk',cheapLabel:'Cheapest & Fastest: Walk',cheapPrice:'£0 (Free)',cheapMin:3,
+       steps:['Step out onto the Queen’s Walk riverside promenade—the London Eye boarding area is immediately next door.'],
+       path:[[51.5019,-0.1197],[51.5033,-0.1195]]
+     }},
+    {n:'London Eye',q:'London Eye, London SE1 7PB',ll:[51.5033,-0.1195],t:'16:30 – 17:15',rate:'£40.00',d:'30-minute twilight/night rotation over Westminster & the illuminated Thames.',
+     leg:{
+       cheapMode:'bus',cheapLabel:'Cheapest: Walk + Bus 26',cheapPrice:'£1.75–£1.85',cheapMin:40,
+       steps:[
+         'Walk 10 min north across Golden Jubilee Footbridge to Aldwych / Somerset House (Stop R).',
+         'Board TfL Bus 26 towards Hackney Wick (via Fleet St, St Paul’s & Bank).',
+         'Alight at Liverpool Street Station (Stop W) and walk 10–12 min east to Brick Lane E1 6RL.'
+       ],
+       altMode:'tube',altLabel:'Faster Tube option: Waterloo & City → Central',altPrice:'£3.10 peak · 30 min',
+       altSteps:'Walk 6 min to Waterloo → Waterloo & City line to Bank (4 min) → Central line 1 stop to Liverpool Street → 12 min walk east.',
+       path:[[51.5033,-0.1195],[51.5112,-0.1155],[51.5136,-0.1040],[51.5178,-0.0823],[51.5217,-0.0716]]
+     }},
+    {n:'Dinner · Brick Lane AirBnB',q:BL.q,ll:BL.ll,t:'18:00 – 20:00',rate:'£15.00',d:'Dinner back at Brick Lane AirBnB.'}
+  ]
+},
+{
+  tab:'Day 4',date:'Fri 4 Dec 2026',title:"Check-out, St James's Park, Buckingham Palace, Madame Tussauds & Finchley Rd",total:'£155.00',
+  notes:[
+    'Check-out from Brick Lane AirBnB is 11:00. Book luggage storage (Bounce/Radical Storage/Stasher) near Baker Street (next to Madame Tussauds & on the direct line to Finchley Road) or Liverpool Street so you walk Royal Parks hands-free.',
+    'New departure stop: Coach to Leeds leaves from London Finchley Road (Stop CL, outside 231–235 Finchley Rd, NW3 6LS opposite O2 Centre) at 19:00–19:40. Arrive at Stop CL by 18:45 and verify exact bay on your ticket.',
+    'All Day 4 dinner picks are within a 1–5 min walk of Finchley Road Stop CL & the O2 Centre.'
+  ],
+  stops:[
+    {n:'Breakfast & Check-out · Brick Lane AirBnB',q:BL.q,ll:BL.ll,t:'09:00 – 11:00',rate:'£15.00',d:'Final breakfast and check out with luggage by 11:00.',
+     leg:{
+       cheapMode:'bus',cheapLabel:'Cheapest: Bus 26',cheapPrice:'£1.75–£1.85',cheapMin:42,
+       steps:[
+         'Walk 10 min west to Liverpool Street Station (Stop F on Bishopsgate).',
+         'Board TfL Bus 26 towards Victoria (via Bank, St Paul’s & Trafalgar Square).',
+         'Alight at Parliament Square / Westminster Abbey (Stop P) and walk 5 min west via Great George St & Birdcage Walk to St James’s Park.'
+       ],
+       altMode:'tube',altLabel:'Faster for 11:30 slot: District Line',altPrice:'£3.00 off-peak · 30 min',
+       altSteps:'Walk 6 min to Aldgate East → District line westbound direct to St James’s Park (~20 min) → Exit via Queen Anne’s Gate (3 min walk into park).',
+       flag:'Leaving Brick Lane at 11:00 gives 30 min to reach St James’s Park—take the District Line Tube (especially if storing bags en route).',
+       path:[[51.5217,-0.0716],[51.5154,-0.0726],[51.5010,-0.1254],[51.4994,-0.1335],[51.5025,-0.1348]]
+     }},
+    {n:"St James's Park",q:"St James's Park, London SW1A 2BJ",ll:[51.5025,-0.1348],t:'11:30 – 12:30',rate:'£0 (Free)',d:'Stroll across the Blue Bridge over the duck lake with classic views of Horse Guards & Buckingham Palace.',
+     leg:{
+       cheapMode:'walk',cheapLabel:'Cheapest & Fastest: Walk',cheapPrice:'£0 (Free)',cheapMin:9,
+       steps:['Walk west along the lakeside path and The Mall directly to the Victoria Memorial & Buckingham Palace gates.'],
+       path:[[51.5025,-0.1348],[51.5014,-0.1419]]
+     }},
+    {n:'Buckingham Palace (exterior)',q:'Buckingham Palace, London SW1A 1AA',ll:[51.5014,-0.1419],t:'12:30 – 13:00',rate:'£0 (Free)',d:'Forecourt railings, Victoria Memorial & Canada Gate.',
+     leg:{
+       cheapMode:'walk',cheapLabel:'Cheapest & Fastest: Walk',cheapPrice:'£0 (Free)',cheapMin:9,
+       steps:['Walk north through Green Park along Queen’s Walk straight to Green Park Station & Piccadilly.'],
+       path:[[51.5014,-0.1419],[51.5067,-0.1428]]
+     }},
+    {n:'Lunch near Green Park Station',q:'Green Park Underground Station, London',ll:[51.5067,-0.1428],t:'13:00 – 14:30',rate:'£30.00 budget',isMeal:true,d:'Walkable budget lunch options from Buckingham Palace / Green Park towards Piccadilly Circus & Chinatown.',
+     foods:[
+       {name:'Tesco Express / Sainsbury’s / M&S',cuisine:'Fast Food / Meal Deals',cat:'Fast Food',walk:'2 min walk (Piccadilly / Green Park)',price:'£4–£6',note:'Best Mayfair budget hack—sandwich/wrap, snack & drink meal deal right next to Green Park station.',ll:[51.5074,-0.1404],q:'Tesco Express Piccadilly Green Park London'},
+       {name:'Itsu / Wasabi / Pret',cuisine:'Asian / Grab & Go',cat:'Asian',walk:'3–4 min walk (Piccadilly)',price:'£7–£10',note:'Hot katsu curry, miso noodles, sushi boxes & hot wraps along Piccadilly.',ll:[51.5078,-0.1390],q:'Itsu Piccadilly, London'},
+       {name:'Masala Zone Piccadilly Circus',cuisine:'Indian',cat:'Indian',walk:'10 min walk (9 Marshall/Piccadilly)',price:'£12–£16',note:'Casual, colourful Indian thalis, curries & street food plates right near Piccadilly Circus.',ll:[51.5103,-0.1348],q:'Masala Zone Piccadilly Circus, London'},
+       {name:'McDonald’s / Five Guys',cuisine:'Burger / American',cat:'Burger',walk:'10 min walk (Coventry St / Piccadilly)',price:'£6–£14',note:'McDonald’s for cheap £6–£8 burgers, or Five Guys right at Piccadilly Circus/Trocadero.',ll:[51.5105,-0.1325],q:'McDonalds Coventry Street Piccadilly Circus London'},
+       {name:'Chinatown (Bunsik & Dumplings)',cuisine:'Asian',cat:'Asian',walk:'12 min walk (Gerrard St)',price:'£6–£11',note:'Quick Korean corn dogs at Bunsik, roast duck buns & budget hand-pulled noodle spots.',ll:[51.5116,-0.1310],q:'Chinatown London Gerrard Street'},
+       {name:'Franco Manca Soho',cuisine:'Pizza',cat:'Pizza',walk:'12 min walk (51 Berwick St / Soho)',price:'£8–£12',note:'Wood-fired Neapolitan sourdough pizzas at great central London prices.',ll:[51.5146,-0.1359],q:'Franco Manca Soho, London'}
+     ],
+     leg:{
+       cheapMode:'bus',cheapLabel:'Cheapest: 2-Bus Hopper (14/19/38 → 13/113)',cheapPrice:'£1.75–£1.85',cheapMin:26,
+       steps:[
+         'From Green Park / Piccadilly (Stop H), take Bus 14, 19 or 38 east 2 stops to Piccadilly Circus / Regent St (or walk 10 min north to Oxford Circus).',
+         'Within 60 min (same £1.75–£1.85 Hopper fare), board Bus 13, 113 or 139 northbound to Baker Street Station (Stop A), 2 min walk to Madame Tussauds.'
+       ],
+       altMode:'tube',altLabel:'Fastest & Direct: Jubilee Line',altPrice:'£3.00 off-peak · 12 min',
+       altSteps:'Green Park Underground → Jubilee line northbound (towards Stanmore/Wembley Park, 4 stops, ~7 min) direct to Baker Street → 3 min walk east along Marylebone Rd.',
+       path:[[51.5067,-0.1428],[51.5152,-0.1415],[51.5226,-0.1571],[51.5233,-0.1552]]
+     }},
+    {n:'Madame Tussauds London',q:'Madame Tussauds London, Marylebone Road, London NW1 5LR',ll:[51.5233,-0.1552],t:'14:30 – 17:00',rate:'£40.00',d:'Wax figures, Spirit of London ride & Marvel 4D experience (allow 2–2.5 hrs).',
+     leg:{
+       cheapMode:'bus',cheapLabel:'Cheapest: Bus 13 or 113 direct',cheapPrice:'£1.75–£1.85',cheapMin:20,
+       steps:[
+         'Walk 2 min west to Baker Street Station (Stop A on Baker St / Park Rd).',
+         'Board TfL Bus 13 (towards North Finchley) or Bus 113 (towards Edgware) straight up Finchley Road.',
+         'Alight at Finchley Road Station / O2 Centre—steps away from all dinner spots and Coach Stop CL.'
+       ],
+       altMode:'tube',altLabel:'Faster Tube option: Jubilee / Metropolitan',altPrice:'£3.10 peak · 10 min',
+       altSteps:'Baker Street Underground → Metropolitan line (1 stop, 4 min) or Jubilee line (2 stops, 5 min) northbound direct to Finchley Road.',
+       path:[[51.5233,-0.1552],[51.5345,-0.1680],[51.5472,-0.1803]]
+     }},
+    {n:'Dinner near Finchley Road (Stop CL)',q:'O2 Centre, 255 Finchley Road, London NW3 6LU',ll:[51.5476,-0.1812],t:'17:00 – 19:00',rate:'£30.00 budget',isMeal:true,d:'Budget dinner picks within 1–5 min walk of Finchley Road Coach Stop CL before your 19:00–19:40 coach.',
+     foods:[
+       {name:'Subway (233 Finchley Rd)',cuisine:'Fast Food',cat:'Fast Food',walk:'1 min walk (right at Stop CL!)',price:'£5–£8',note:'Literally right beside Coach Stop CL—ideal grab-and-go sub or warm toasted wrap for the coach.',ll:[51.5469,-0.1799],q:'Subway, 233 Finchley Road, London NW3 6LS'},
+       {name:'Tortilla Finchley Road',cuisine:'Fast Food / Tex-Mex',cat:'Fast Food',walk:'1 min walk (by station)',price:'£8–£11',note:'Freshly rolled burritos, tacos & loaded rice bowls right outside Finchley Road station.',ll:[51.5473,-0.1805],q:'Tortilla, Finchley Road, London'},
+       {name:'Shake Shack (Finchley Rd)',cuisine:'Burger / American',cat:'Burger',walk:'2 min walk (115 Finchley Rd)',price:'£10–£15',note:'Just outside the O2 Centre—smashed Angus cheeseburgers, crinkle fries & shakes.',ll:[51.5474,-0.1808],q:'Shake Shack, Finchley Road, London'},
+       {name:'Nando’s (O2 Centre)',cuisine:'Fast Food / American',cat:'Fast Food',walk:'2 min walk (O2 Centre)',price:'£11–£15',note:'Inside the O2 Centre—reliable peri-peri chicken, wraps, chips & spicy rice.',ll:[51.5479,-0.1815],q:'Nandos O2 Centre Finchley Road London'},
+       {name:'McDonald’s (Harben Parade)',cuisine:'Burger / Fast Food',cat:'Burger',walk:'3 min walk (4 Harben Parade)',price:'£6–£9',note:'Down towards Swiss Cottage—cheapest hot burger & fries meal before boarding.',ll:[51.5446,-0.1768],q:'McDonalds Harben Parade Finchley Road London'},
+       {name:'KFC (149 Finchley Rd)',cuisine:'Fast Food',cat:'Fast Food',walk:'5 min walk (149 Finchley Rd)',price:'£7–£10',note:'Quick fried chicken buckets, wraps & rice boxes heading south towards Swiss Cottage.',ll:[51.5449,-0.1772],q:'KFC, 149 Finchley Road, London'},
+       {name:'Zizzi (O2 Centre)',cuisine:'Pizza',cat:'Pizza',walk:'2 min walk (O2 Centre)',price:'£12–£16',note:'Sit-down stone-baked Rustica pizzas & pasta inside O2 Centre (check app/voucher deals).',ll:[51.5478,-0.1813],q:'Zizzi O2 Centre Finchley Road London'},
+       {name:'Yaki Ya / Local Asian Noodle Bars',cuisine:'Asian',cat:'Asian',walk:'2–4 min walk (Finchley Rd)',price:'£9–£14',note:'Independent pan-Asian spots along Finchley Rd serving ramen, bento boxes & stir-fries.',ll:[51.5462,-0.1791],q:'Japanese Asian restaurant Finchley Road NW3 London'},
+       {name:'Local Indian / Spice Delis',cuisine:'Indian',cat:'Indian',walk:'5–8 min walk (Swiss Cottage / W Hampstead)',price:'£10–£15',note:'Neighborhood curry houses & spice delis just north/south along Finchley Rd for curries & naan.',ll:[51.5435,-0.1755],q:'Indian restaurant near Finchley Road NW3 London'}
+     ],
+     leg:{
+       cheapMode:'walk',cheapLabel:'Cheapest & Fastest: Walk',cheapPrice:'£0 (Free)',cheapMin:2,
+       steps:['Walk 1–3 min to Coach Stop CL (outside 231–235 Finchley Rd, NW3 6LS, between Subway and Akeman House, opposite O2 Centre).'],
+       path:[[51.5476,-0.1812],[51.5470,-0.1800]]
+     }},
+    {n:'Coach to Leeds · London Finchley Road (Stop CL)',q:'Finchley Road Stop CL, 233 Finchley Road, London NW3 6LS',ll:[51.5470,-0.1800],t:'19:00 – 19:40 (Board & Depart)',rate:'£40.00',d:'Arrive by 18:45 with bags at Stop CL (231–235 Finchley Rd, NW3 6LS) for your coach to Leeds.'}
+  ]
+}
+];
+
 // Theme
 var html=document.documentElement,stored=localStorage.getItem('theme'),sysDark=window.matchMedia('(prefers-color-scheme:dark)').matches;
-applyTheme(stored||(sysDark?'dark':'light'));
-document.getElementById('themeBtn').addEventListener('click',function(){applyTheme(html.dataset.theme==='dark'?'light':'dark')});
-function applyTheme(t){html.setAttribute('data-theme',t);localStorage.setItem('theme',t);var ico=document.getElementById('themeIcon');if(t==='dark'){ico.innerHTML='<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="currentColor" stroke="none"/>';}else{ico.innerHTML='<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';}}
-// Toast
+applyTheme(stored||(sysDark?'dark':'dark')); // Keep dark mode default
+document.getElementById('themeBtn').addEventListener('click',function(){applyTheme(html.dataset.theme==='dark'?'light':'dark');if(leafletMap)initLeaflet(current);});
+function applyTheme(t){
+  html.setAttribute('data-theme',t);
+  localStorage.setItem('theme',t);
+  var ico=document.getElementById('themeIcon');
+  if(t==='dark'){
+    ico.innerHTML='<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="currentColor" stroke="none"/>';
+  }else{
+    ico.innerHTML='<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
+  }
+}
+
+// Toast & Share
 var toastEl=document.getElementById('toast'),toastTmr;
 function showToast(msg){clearTimeout(toastTmr);toastEl.textContent=msg;toastEl.classList.add('show');toastTmr=setTimeout(function(){toastEl.classList.remove('show');},2800);}
-// Share
-document.getElementById('shareBtn').addEventListener('click',function(){var url=location.href,title='London December 2026 Route Maps';if(navigator.share){navigator.share({title:title,url:url}).catch(function(){});}else if(navigator.clipboard){navigator.clipboard.writeText(url).then(function(){showToast('\u2713 Link copied to clipboard');}).catch(function(){showToast('Copy: '+url);});}else{showToast('Copy: '+url);}});
-// Utils
-var current=0;
+document.getElementById('shareBtn').addEventListener('click',function(){
+  var url=location.href,title='London December 2026 Route Maps';
+  if(navigator.share){navigator.share({title:title,url:url}).catch(function(){});}
+  else if(navigator.clipboard){navigator.clipboard.writeText(url).then(function(){showToast('\u2713 Link copied to clipboard');}).catch(function(){showToast('Copy: '+url);});}
+  else{showToast('Copy: '+url);}
+});
+
+// State & Helpers
+var current=0,mapMode=(typeof L!=='undefined')?'street':'vector',showFoodPins=true,leafletMap=null,markerLookup={};
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function mk(tag,cls,inner){var e=document.createElement(tag);if(cls)e.className=cls;if(inner!=null)e.innerHTML=inner;return e;}
-function gm(o,d,w,mode){return 'https://www.google.com/maps/dir/?api=1&origin='+encodeURIComponent(o)+'&destination='+encodeURIComponent(d)+(w&&w.length?'&waypoints='+w.map(encodeURIComponent).join('%7C'):'')+('&travelmode='+mode);}
-// Projection
-function project(day){var W=760,H=460,P=68,pts=day.stops.map(function(s){return s.ll;});var lat0=Math.max.apply(null,pts.map(function(p){return p[0];})),lat1=Math.min.apply(null,pts.map(function(p){return p[0];})),lon0=Math.min.apply(null,pts.map(function(p){return p[1];})),lon1=Math.max.apply(null,pts.map(function(p){return p[1];}));var k=Math.cos(51.5*Math.PI/180),sx=(lon1-lon0)*k*111320||1,sy=(lat0-lat1)*110574||1,s=Math.min((W-2*P)/sx,(H-2*P)/sy),ox=(W-sx*s)/2,oy=(H-sy*s)/2;return{W:W,H:H,f:function(p){return[ox+(p[1]-lon0)*k*111320*s,oy+(lat0-p[0])*110574*s];}};}
-// SVG
-function buildSVG(day){var pr=project(day),out='<svg viewBox="0 0 '+pr.W+' '+pr.H+'" role="img" aria-label="Schematic route map for '+esc(day.title)+'">';out+='<rect width="'+pr.W+'" height="'+pr.H+'" fill="var(--surface)"/>';var th=THAMES.map(function(p){return pr.f(p).map(function(v){return v.toFixed(1);}).join(',');}).join(' ');out+='<polyline points="'+th+'" fill="none" stroke="var(--river-stroke)" stroke-width="20" stroke-linecap="round" stroke-linejoin="round" opacity="0.65"/>';var lp=pr.f([51.5086,-0.0938]);if(lp[0]>24&&lp[0]<pr.W-100&&lp[1]>24&&lp[1]<pr.H-24){out+='<text x="'+(lp[0]-28).toFixed(0)+'" y="'+(lp[1]+4).toFixed(0)+'" font-size="10" font-family="Georgia,serif" font-style="italic" fill="var(--river-label)">River Thames</text>';}
-var st=day.stops;st.forEach(function(s,i){var n=st[i+1];if(!s.leg||!n)return;var a=pr.f(s.ll),b=pr.f(n.ll),tube=s.leg.m==='tube';out+='<line x1="'+a[0].toFixed(1)+'" y1="'+a[1].toFixed(1)+'" x2="'+b[0].toFixed(1)+'" y2="'+b[1].toFixed(1)+'" stroke="'+(tube?'var(--transit)':'var(--walk)')+'" stroke-width="3"'+(tube?' stroke-dasharray="8 5"':'')+' stroke-linecap="round" opacity="0.9"/>';});
-st.forEach(function(s,i){var n=st[i+1];if(!s.leg||!n)return;var a=pr.f(s.ll),b=pr.f(n.ll),mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2;if(Math.hypot(a[0]-b[0],a[1]-b[1])<52)return;var tube=s.leg.m==='tube';out+='<g><rect x="'+(mx-18).toFixed(1)+'" y="'+(my-9).toFixed(1)+'" width="36" height="18" rx="9" fill="var(--surface)" stroke="'+(tube?'var(--transit)':'var(--walk)')+'" stroke-width="1.5"/><text x="'+mx.toFixed(1)+'" y="'+(my+4.5).toFixed(1)+'" font-size="10" text-anchor="middle" fill="var(--ink)" font-family="system-ui,sans-serif" font-weight="600">'+s.leg.min+'m</text></g>';});
-var groups={};st.forEach(function(s,i){var key=s.ll.join();if(!groups[key])groups[key]={ll:s.ll,ids:[]};groups[key].ids.push(i+1);});Object.keys(groups).forEach(function(k){var g=groups[k],p=pr.f(g.ll),lab=g.ids.join('/'),w=Math.max(26,lab.length*9+14);out+='<g class="svg-pin" data-ids="'+g.ids.join(',')+'" style="cursor:pointer"><rect x="'+(p[0]-w/2).toFixed(1)+'" y="'+(p[1]-14).toFixed(1)+'" width="'+w+'" height="28" rx="14" fill="var(--pin-bg)" stroke="var(--surface)" stroke-width="2.5"/><text x="'+p[0].toFixed(1)+'" y="'+(p[1]+5).toFixed(1)+'" font-size="11.5" font-weight="700" text-anchor="middle" fill="var(--pin-ink)" font-family="system-ui,sans-serif">'+lab+'</text></g>';});return out+'</svg>';}
-// Highlight
-function hl(n){document.querySelectorAll('.stop').forEach(function(r){r.classList.toggle('on',+r.dataset.i===n);});document.querySelectorAll('.svg-pin').forEach(function(p){p.style.opacity=p.dataset.ids.split(',').indexOf(String(n))>-1?'1':'0.3';});var active=document.querySelector('.stop[data-i="'+n+'"]');if(active)active.scrollIntoView({behavior:'smooth',block:'nearest'});}
-// Render
-function render(i){current=i;var day=DAYS[i],root=document.getElementById('day');root.innerHTML='';root.classList.remove('day-animate');void root.offsetWidth;root.classList.add('day-animate');document.querySelectorAll('.tab').forEach(function(b,j){b.setAttribute('aria-selected',j===i?'true':'false');});
-var hdr=mk('div','day-header');hdr.appendChild(mk('div','day-date',esc(day.date)));hdr.appendChild(mk('div','day-title',esc(day.title)));root.appendChild(hdr);
-var mapbox=mk('div','mapbox',buildSVG(day));mapbox.appendChild(mk('div','legend','<span class="leg-swatch"><span class="swatch-line"></span>Walking leg</span><span class="leg-swatch"><span class="swatch-line t"></span>Tube / bus leg</span><span style="color:var(--ink3)">Pills = minutes</span>'));root.appendChild(mapbox);
-mapbox.querySelectorAll('.svg-pin').forEach(function(p){p.addEventListener('click',function(){hl(+p.dataset.ids.split(',')[0]);});});
-if(day.notes&&day.notes.length){var notes=mk('div','notes'),nh=mk('div','notes-head','<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--warn-ink)" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="13"/><circle cx="12" cy="16.5" r="0.5" fill="var(--warn-ink)" stroke="var(--warn-ink)" stroke-width="1"/></svg><h3>Check before you go</h3>');notes.appendChild(nh);var ul=mk('ul');day.notes.forEach(function(n){ul.appendChild(mk('li','',esc(n)));});notes.appendChild(ul);root.appendChild(notes);}
-var tl=mk('ol','tl');day.stops.forEach(function(s,k){var li=mk('li','stop-item'),row=mk('div','stop');row.dataset.i=k+1;row.innerHTML='<div class="pinno">'+(k+1)+'</div><div><div class="stop-name">'+esc(s.n)+'</div><div class="stop-time">'+esc(s.t)+'</div><div class="stop-desc">'+esc(s.d)+'</div></div>';row.addEventListener('click',function(){hl(k+1);});li.appendChild(row);if(s.leg){var isTube=s.leg.m==='tube',lg=mk('div','leg'+(isTube?' transit':''));lg.innerHTML='<div class="leg-mode"><span class="leg-dot"></span>'+(isTube?'Tube / bus':'Walk')+' \u00b7 about '+s.leg.min+' min</div><div class="leg-how">'+esc(s.leg.how)+'</div>'+(s.leg.flag?'<div class="leg-flag">\u26a0 '+esc(s.leg.flag)+'</div>':'');li.appendChild(lg);}tl.appendChild(li);});root.appendChild(tl);
-var ls=mk('div','links-section');ls.appendChild(mk('div','links-title','Open in Google Maps'));var linkList=mk('div','links'),S=day.stops,mid=S.slice(1,-1).map(function(s){return s.q;}),arrow='<svg class="map-link-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
-var allA=mk('a','map-link main','<div><div>All stops in order</div><small>Every stop as a waypoint in walking mode</small></div>'+arrow);allA.href=gm(S[0].q,S[S.length-1].q,mid,'walking');allA.target='_blank';allA.rel='noopener noreferrer';linkList.appendChild(allA);
-var runs=[],cur=null;S.forEach(function(s,k){var nx=S[k+1];if(!nx||!s.leg)return;if(s.leg.m==='walk'){if(!cur){cur=[k];runs.push(cur);}cur.push(k+1);}else cur=null;});
-runs.forEach(function(r){var a=mk('a','map-link','<div><div>Walk: '+esc(S[r[0]].n)+' \u2192 '+esc(S[r[r.length-1]].n)+'</div><small>Stops '+(r[0]+1)+'\u2013'+(r[r.length-1]+1)+'</small></div>'+arrow);a.href=gm(S[r[0]].q,S[r[r.length-1]].q,r.slice(1,-1).map(function(x){return S[x].q;}),'walking');a.target='_blank';a.rel='noopener noreferrer';linkList.appendChild(a);});
-ls.appendChild(linkList);root.appendChild(ls);try{history.replaceState(null,'','#day-'+(i+1));}catch(e){};}
+function gm(o,d,w,mode){return 'https://www.google.com/maps/dir/?api=1&origin='+encodeURIComponent(o)+'&destination='+encodeURIComponent(d)+(w&&w.length?'&waypoints='+w.map(encodeURIComponent).join('%7C'):'')+'&travelmode='+mode;}
+function gmPlace(q){return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q);}
+
+// Realistic Vector Projection & SVG Builder
+function project(day){
+  var W=780,H=460,P=64,pts=day.stops.map(function(s){return s.ll;});
+  day.stops.forEach(function(s){
+    if(s.leg&&s.leg.path)s.leg.path.forEach(function(p){pts.push(p);});
+    if(showFoodPins&&s.foods)s.foods.forEach(function(f){pts.push(f.ll);});
+  });
+  var lat0=Math.max.apply(null,pts.map(function(p){return p[0];})),
+      lat1=Math.min.apply(null,pts.map(function(p){return p[0];})),
+      lon0=Math.min.apply(null,pts.map(function(p){return p[1];})),
+      lon1=Math.max.apply(null,pts.map(function(p){return p[1];}));
+  // Add small margin so Thames is visible when nearby
+  lat0+=0.004;lat1-=0.004;lon0-=0.006;lon1+=0.006;
+  var k=Math.cos(51.5*Math.PI/180),
+      sx=(lon1-lon0)*k*111320||1,
+      sy=(lat0-lat1)*110574||1,
+      s=Math.min((W-2*P)/sx,(H-2*P)/sy),
+      ox=(W-sx*s)/2,
+      oy=(H-sy*s)/2;
+  return{
+    W:W,H:H,scale:s,
+    f:function(p){return[ox+(p[1]-lon0)*k*111320*s,oy+(lat0-p[0])*110574*s];}
+  };
+}
+
+function buildSVG(day){
+  var pr=project(day),W=pr.W,H=pr.H;
+  var out='<svg class="vec-map" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Realistic vector route map for '+esc(day.title)+'">';
+  out+='<defs><pattern id="urbanGrid" width="28" height="28" patternUnits="userSpaceOnUse"><path d="M 28 0 L 0 0 0 28" fill="none" stroke="var(--grid-stroke)" stroke-width="1"/></pattern></defs>';
+  out+='<rect width="'+W+'" height="'+H+'" fill="var(--bg2)"/>';
+  out+='<rect width="'+W+'" height="'+H+'" fill="url(#urbanGrid)"/>';
+
+  // Royal Parks
+  PARKS.forEach(function(pk){
+    var pts=pk.pts.map(function(p){return pr.f(p).map(function(v){return v.toFixed(1);}).join(',');}).join(' ');
+    out+='<polygon points="'+pts+'" fill="var(--park-fill)" stroke="var(--park-stroke)" stroke-width="1.2"/>';
+    var cx=0,cy=0;pk.pts.forEach(function(p){var q=pr.f(p);cx+=q[0];cy+=q[1];});cx/=pk.pts.length;cy/=pk.pts.length;
+    if(cx>20&&cx<W-20&&cy>16&&cy<H-16){
+      out+='<text x="'+cx.toFixed(1)+'" y="'+cy.toFixed(1)+'" font-size="8.5" font-weight="600" text-anchor="middle" fill="var(--park-stroke)" opacity="0.95">'+esc(pk.n)+'</text>';
+    }
+  });
+
+  // Arterial Roads
+  ROADS.forEach(function(r){
+    var pts=r.map(function(p){return pr.f(p).map(function(v){return v.toFixed(1);}).join(',');}).join(' ');
+    out+='<polyline points="'+pts+'" fill="none" stroke="var(--road-stroke)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>';
+  });
+
+  // River Thames polygon
+  var thPts=THAMES_POLY.map(function(p){return pr.f(p).map(function(v){return v.toFixed(1);}).join(',');}).join(' ');
+  out+='<polygon points="'+thPts+'" fill="var(--river-fill)" stroke="var(--river-stroke)" stroke-width="1.5" stroke-linejoin="round"/>';
+
+  // Bridges
+  BRIDGES.forEach(function(br){
+    var a=pr.f(br.a),b=pr.f(br.b);
+    if((a[0]<0&&b[0]<0)||(a[0]>W&&b[0]>W)||(a[1]<0&&b[1]<0)||(a[1]>H&&b[1]>H))return;
+    out+='<line x1="'+a[0].toFixed(1)+'" y1="'+a[1].toFixed(1)+'" x2="'+b[0].toFixed(1)+'" y2="'+b[1].toFixed(1)+'" stroke="var(--ink3)" stroke-width="3" opacity="0.65"/>';
+    out+='<text x="'+((a[0]+b[0])/2).toFixed(1)+'" y="'+((a[1]+b[1])/2-5).toFixed(1)+'" font-size="7.5" text-anchor="middle" fill="var(--ink3)" opacity="0.85">'+esc(br.n)+'</text>';
+  });
+
+  // Thames label
+  var lp=pr.f([51.5070,-0.0980]);
+  if(lp[0]>40&&lp[0]<W-80&&lp[1]>20&&lp[1]<H-20){
+    out+='<text x="'+lp[0].toFixed(1)+'" y="'+lp[1].toFixed(1)+'" font-size="10" font-family="Georgia,serif" font-style="italic" text-anchor="middle" fill="var(--river-label)">River Thames</text>';
+  }
+
+  // Neighborhood labels
+  NEIGHBORHOODS.forEach(function(nb){
+    var p=pr.f(nb.ll);
+    if(p[0]>30&&p[0]<W-30&&p[1]>18&&p[1]<H-18){
+      out+='<text x="'+p[0].toFixed(1)+'" y="'+p[1].toFixed(1)+'" font-size="8.5" font-weight="700" letter-spacing="1.2" text-anchor="middle" fill="var(--ink3)" opacity="0.55">'+esc(nb.n)+'</text>';
+    }
+  });
+
+  // Tube Stations
+  TUBE_STNS.forEach(function(ts){
+    var p=pr.f(ts.ll);
+    if(p[0]<18||p[0]>W-18||p[1]<18||p[1]>H-18)return;
+    out+='<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="3" fill="var(--surface)" stroke="#EF4444" stroke-width="1.6"/>';
+    out+='<text x="'+(p[0]+5).toFixed(1)+'" y="'+(p[1]+3).toFixed(1)+'" font-size="7.5" fill="var(--ink3)" opacity="0.85">'+esc(ts.n)+'</text>';
+  });
+
+  // Realistic multi-waypoint route paths
+  var st=day.stops;
+  st.forEach(function(s,i){
+    var n=st[i+1];if(!s.leg||!n)return;
+    var pathLL=(s.leg.path&&s.leg.path.length>=2)?s.leg.path:[s.ll,n.ll];
+    var pts=pathLL.map(function(p){return pr.f(p).map(function(v){return v.toFixed(1);}).join(',');}).join(' ');
+    var mode=s.leg.cheapMode;
+    var col=mode==='walk'?'var(--walk)':(mode==='bus'?'var(--bus)':'var(--transit)');
+    var dash=mode==='walk'?'':(mode==='bus'?' stroke-dasharray="7 5"':' stroke-dasharray="4 4"');
+    out+='<polyline points="'+pts+'" fill="none" stroke="'+col+'" stroke-width="3.2"'+dash+' stroke-linecap="round" stroke-linejoin="round" opacity="0.92"/>';
+  });
+
+  // Duration pills at path midpoints
+  st.forEach(function(s,i){
+    var n=st[i+1];if(!s.leg||!n)return;
+    var pathLL=(s.leg.path&&s.leg.path.length>=2)?s.leg.path:[s.ll,n.ll];
+    var midIdx=Math.floor(pathLL.length/2);
+    var a=pr.f(pathLL[midIdx-1]||pathLL[0]),b=pr.f(pathLL[midIdx]);
+    if(pathLL.length===2&&Math.hypot(a[0]-b[0],a[1]-b[1])<46)return;
+    var mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2;
+    var mode=s.leg.cheapMode;
+    var col=mode==='walk'?'var(--walk)':(mode==='bus'?'var(--bus)':'var(--transit)');
+    var lbl=(mode==='bus'?'🚌 ':(mode==='tube'?'🚇 ':'🚶 '))+s.leg.cheapMin+'m';
+    var pw=lbl.length*6.2+14;
+    out+='<g><rect x="'+(mx-pw/2).toFixed(1)+'" y="'+(my-9.5).toFixed(1)+'" width="'+pw.toFixed(1)+'" height="19" rx="9.5" fill="var(--surface)" stroke="'+col+'" stroke-width="1.4"/><text x="'+mx.toFixed(1)+'" y="'+(my+3.8).toFixed(1)+'" font-size="9.2" text-anchor="middle" fill="var(--ink)" font-weight="600">'+lbl+'</text></g>';
+  });
+
+  // Food pins (optional)
+  if(showFoodPins){
+    st.forEach(function(s){
+      if(!s.foods)return;
+      s.foods.forEach(function(fd){
+        var p=pr.f(fd.ll);
+        out+='<circle class="svg-food-pin" cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="4.5" fill="var(--food)" stroke="var(--bg)" stroke-width="1.5"><title>'+esc(fd.name)+' ('+esc(fd.price)+')</title></circle>';
+      });
+    });
+  }
+
+  // Stop Pins (grouped if overlapping coordinates)
+  var groups={};
+  st.forEach(function(s,i){
+    var key=s.ll[0].toFixed(4)+','+s.ll[1].toFixed(4);
+    if(!groups[key])groups[key]={ll:s.ll,ids:[],isMeal:s.isMeal};
+    groups[key].ids.push(i+1);
+    if(s.isMeal)groups[key].isMeal=true;
+  });
+  Object.keys(groups).forEach(function(k){
+    var g=groups[k],p=pr.f(g.ll),lab=g.ids.join('/'),w=Math.max(26,lab.length*8.5+14);
+    var fill=g.isMeal&&g.ids.length===1?'var(--food)':'var(--pin-bg)';
+    var ink=g.isMeal&&g.ids.length===1?'#090D16':'var(--pin-ink)';
+    out+='<g class="svg-pin" data-ids="'+g.ids.join(',')+'" style="cursor:pointer"><rect x="'+(p[0]-w/2).toFixed(1)+'" y="'+(p[1]-13.5).toFixed(1)+'" width="'+w+'" height="27" rx="13.5" fill="'+fill+'" stroke="var(--bg)" stroke-width="2.5"/><text x="'+p[0].toFixed(1)+'" y="'+(p[1]+4.2).toFixed(1)+'" font-size="11" font-weight="700" text-anchor="middle" fill="'+ink+'">'+lab+'</text></g>';
+  });
+
+  // Compass & Dynamic Scale Bar
+  var kmPx=Math.min(120,Math.max(45,1000*pr.scale)),kmLbl='1 km';
+  if(1000*pr.scale>140){kmPx=500*pr.scale;kmLbl='500 m';}
+  out+='<g transform="translate(18,'+(H-26)+')"><line x1="0" y1="0" x2="'+kmPx.toFixed(1)+'" y2="0" stroke="var(--ink2)" stroke-width="2"/><line x1="0" y1="-4" x2="0" y2="4" stroke="var(--ink2)" stroke-width="2"/><line x1="'+kmPx.toFixed(1)+'" y1="-4" x2="'+kmPx.toFixed(1)+'" y2="4" stroke="var(--ink2)" stroke-width="2"/><text x="'+(kmPx/2).toFixed(1)+'" y="-6" font-size="8.5" font-weight="600" text-anchor="middle" fill="var(--ink2)">'+kmLbl+'</text></g>';
+  out+='<g transform="translate('+(W-26)+',26)"><circle r="13" fill="var(--surface)" stroke="var(--border-h)" stroke-width="1.2"/><text y="3.5" font-size="10" font-weight="700" text-anchor="middle" fill="var(--walk)">N</text></g>';
+
+  return out+'</svg>';
+}
+
+// Live Leaflet Street Map
+function initLeaflet(dayIdx){
+  var el=document.getElementById('leafletMap');
+  if(!el||typeof L==='undefined'){
+    mapMode='vector';
+    render(dayIdx);
+    return;
+  }
+  if(leafletMap){leafletMap.remove();leafletMap=null;}
+  markerLookup={};
+
+  var isDark=html.getAttribute('data-theme')!=='light';
+  var day=DAYS[dayIdx];
+  leafletMap=L.map(el,{zoomControl:true,attributionControl:true});
+
+  var tileUrl=isDark
+    ?'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+    :'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+
+  var tileLayer=L.tileLayer(tileUrl,{
+    maxZoom:19,
+    attribution:'&copy; OpenStreetMap &copy; CARTO'
+  });
+  var tileErrors=0;
+  tileLayer.on('tileerror',function(){
+    tileErrors++;
+    if(tileErrors>4&&mapMode==='street'){
+      mapMode='vector';
+      render(dayIdx);
+      showToast('Offline or tiles blocked — switched to Vector Map');
+    }
+  });
+  tileLayer.addTo(leafletMap);
+
+  var bounds=L.latLngBounds([]);
+
+  // Draw route polylines
+  day.stops.forEach(function(s,i){
+    var n=day.stops[i+1];if(!s.leg||!n)return;
+    var pathLL=(s.leg.path&&s.leg.path.length>=2)?s.leg.path:[s.ll,n.ll];
+    var mode=s.leg.cheapMode;
+    var col=mode==='walk'?'#38BDF8':(mode==='bus'?'#34D399':'#FB923C');
+    var opts={color:col,weight:4,opacity:0.9};
+    if(mode==='bus')opts.dashArray='8, 7';
+    if(mode==='tube')opts.dashArray='4, 6';
+    L.polyline(pathLL,opts).bindTooltip(s.leg.cheapLabel+' ('+s.leg.cheapPrice+', ~'+s.leg.cheapMin+'m)').addTo(leafletMap);
+  });
+
+  // Food pins
+  if(showFoodPins){
+    day.stops.forEach(function(s){
+      if(!s.foods)return;
+      s.foods.forEach(function(fd){
+        var fIcon=L.divIcon({className:'',html:'<div class="custom-pin food-pin" title="'+esc(fd.name)+'">🍴</div>',iconSize:[22,22],iconAnchor:[11,11]});
+        var fm=L.marker(fd.ll,{icon:fIcon}).addTo(leafletMap);
+        fm.bindPopup('<strong>'+esc(fd.name)+'</strong><br><span style="color:var(--food)">'+esc(fd.cuisine)+'</span> · '+esc(fd.price)+'<br><small>'+esc(fd.walk)+'</small><br><small>'+esc(fd.note)+'</small>');
+        markerLookup['food:'+fd.name]=fm;
+      });
+    });
+  }
+
+  // Grouped stop markers
+  var groups={};
+  day.stops.forEach(function(s,i){
+    var key=s.ll[0].toFixed(4)+','+s.ll[1].toFixed(4);
+    if(!groups[key])groups[key]={ll:s.ll,ids:[],stops:[]};
+    groups[key].ids.push(i+1);
+    groups[key].stops.push(s);
+    bounds.extend(s.ll);
+  });
+
+  Object.keys(groups).forEach(function(k){
+    var g=groups[k],lab=g.ids.join('/');
+    var isMulti=g.ids.length>1;
+    var isMealOnly=g.stops.length===1&&g.stops[0].isMeal;
+    var bgStyle=isMealOnly?' style="background:var(--food);color:#090D16"':'';
+    var icon=L.divIcon({
+      className:'',
+      html:'<div class="custom-pin'+(isMulti?' multi':'')+'" data-ids="'+g.ids.join(',')+'"'+bgStyle+'>'+lab+'</div>',
+      iconSize:[isMulti?42:28,28],
+      iconAnchor:[isMulti?21:14,14]
+    });
+    var m=L.marker(g.ll,{icon:icon}).addTo(leafletMap);
+    var pop=g.stops.map(function(st,idx){
+      return '<div><strong>#'+g.ids[idx]+' '+esc(st.n)+'</strong><br><span style="color:var(--walk)">'+esc(st.t)+'</span> · '+esc(st.rate||'')+'</div>';
+    }).join('<hr style="border:none;border-top:1px solid var(--border);margin:5px 0">');
+    m.bindPopup(pop);
+    m.on('click',function(){hl(g.ids[0],true);});
+    g.ids.forEach(function(id){markerLookup[id]=m;});
+  });
+
+  leafletMap.fitBounds(bounds,{padding:[36,36]});
+}
+
+// Highlight synced across timeline + SVG + Leaflet
+function hl(n,fromMap){
+  document.querySelectorAll('.stop').forEach(function(r){r.classList.toggle('on',+r.dataset.i===n);});
+  document.querySelectorAll('.svg-pin').forEach(function(p){p.style.opacity=p.dataset.ids.split(',').indexOf(String(n))>-1?'1':'0.32';});
+  document.querySelectorAll('.custom-pin[data-ids]').forEach(function(p){
+    p.classList.toggle('active',p.dataset.ids.split(',').indexOf(String(n))>-1);
+  });
+  if(!fromMap&&leafletMap&&markerLookup[n]){
+    leafletMap.panTo(markerLookup[n].getLatLng(),{animate:true});
+    markerLookup[n].openPopup();
+  }
+  var active=document.querySelector('.stop[data-i="'+n+'"]');
+  if(active)active.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function focusFoodOnMap(name,ll){
+  if(mapMode==='street'&&leafletMap){
+    if(!showFoodPins){showFoodPins=true;render(current);}
+    var m=markerLookup['food:'+name];
+    if(m){leafletMap.setView(ll,16,{animate:true});m.openPopup();}
+    document.querySelector('.mapbox').scrollIntoView({behavior:'smooth',block:'nearest'});
+  }else{
+    if(!showFoodPins){showFoodPins=true;render(current);}
+    document.querySelector('.mapbox').scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
+}
+
+// Render Day
+function render(i){
+  current=i;
+  var day=DAYS[i],root=document.getElementById('day');
+  root.innerHTML='';
+  root.classList.remove('day-animate');void root.offsetWidth;root.classList.add('day-animate');
+  document.querySelectorAll('.tab').forEach(function(b,j){b.setAttribute('aria-selected',j===i?'true':'false');});
+
+  // Header
+  var hdr=mk('div','day-header');
+  var hLeft=mk('div','');
+  hLeft.appendChild(mk('div','day-date',esc(day.date)));
+  hLeft.appendChild(mk('div','day-title',esc(day.title)));
+  hdr.appendChild(hLeft);
+  hdr.appendChild(mk('div','day-cost','Est. Day Spend: '+esc(day.total)));
+  root.appendChild(hdr);
+
+  // Fare key bar
+  var fbar=mk('div','fare-bar');
+  fbar.innerHTML='<div class="fare-grid"><strong>Transit Fare Rule (No Trams in Zone 1–2):</strong>'+
+    '<span class="fare-badge walk">🚶 Walk · £0</span>'+
+    '<span class="fare-badge bus">🚌 TfL Bus · £1.75–£1.85 (1h Hopper)</span>'+
+    '<span class="fare-badge tube">🚇 Tube · £3.00 off-peak / £3.10 peak (£8.90/day cap)</span></div>'+
+    '<div style="font-size:0.78rem;color:var(--ink3)">Directions below always lead with the <b>cheapest option</b> first, plus the faster Tube alternative whenever timings are tight.</div>';
+  root.appendChild(fbar);
+
+  // Mapbox
+  var mapbox=mk('div','mapbox');
+  var tb=mk('div','map-toolbar');
+  var modeGrp=mk('div','map-mode-group');
+  var streetBtn=mk('button','map-mode-btn'+(mapMode==='street'?' active':''),'🗺 Live Street Map');
+  var vecBtn=mk('button','map-mode-btn'+(mapMode==='vector'?' active':''),'📐 Vector Route Map');
+  streetBtn.addEventListener('click',function(){if(typeof L==='undefined'){showToast('Leaflet unavailable offline — showing Vector Map');return;}mapMode='street';render(i);});
+  vecBtn.addEventListener('click',function(){mapMode='vector';render(i);});
+  modeGrp.appendChild(streetBtn);modeGrp.appendChild(vecBtn);
+
+  var foodBtn=mk('button','map-toggle-food'+(showFoodPins?' active':''),'🍴 Food Pins: '+(showFoodPins?'ON':'OFF'));
+  foodBtn.addEventListener('click',function(){showFoodPins=!showFoodPins;render(i);});
+  tb.appendChild(modeGrp);tb.appendChild(foodBtn);
+  mapbox.appendChild(tb);
+
+  var canvas=mk('div','map-canvas'+(mapMode==='vector'?' vector-mode':''));
+  if(mapMode==='street'){
+    canvas.innerHTML='<div id="leafletMap"></div>';
+  }else{
+    canvas.innerHTML=buildSVG(day);
+  }
+  mapbox.appendChild(canvas);
+  mapbox.appendChild(mk('div','legend',
+    '<span class="leg-swatch"><span class="swatch-line"></span>Walk (£0)</span>'+
+    '<span class="leg-swatch"><span class="swatch-line b"></span>Bus (£1.75–£1.85)</span>'+
+    '<span class="leg-swatch"><span class="swatch-line t"></span>Tube (£3.00–£3.10)</span>'+
+    '<span class="leg-swatch"><span class="swatch-dot"></span>Budget Food</span>'
+  ));
+  root.appendChild(mapbox);
+
+  if(mapMode==='street'){
+    setTimeout(function(){initLeaflet(i);},0);
+  }else{
+    mapbox.querySelectorAll('.svg-pin').forEach(function(p){
+      p.addEventListener('click',function(){hl(+p.dataset.ids.split(',')[0],true);});
+    });
+  }
+
+  // Notes
+  if(day.notes&&day.notes.length){
+    var notes=mk('div','notes'),nh=mk('div','notes-head','<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--warn-ink)" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="13"/><circle cx="12" cy="16.5" r="0.5" fill="var(--warn-ink)" stroke="var(--warn-ink)" stroke-width="1"/></svg><h3>Plan &amp; Timing Notes</h3>');
+    notes.appendChild(nh);
+    var ul=mk('ul');day.notes.forEach(function(n){ul.appendChild(mk('li','',esc(n)));});
+    notes.appendChild(ul);root.appendChild(notes);
+  }
+
+  // Timeline
+  var tl=mk('ol','tl');
+  day.stops.forEach(function(s,k){
+    var li=mk('li','stop-item');
+    var row=mk('div','stop'+(s.isMeal?' is-meal':''));
+    row.dataset.i=k+1;
+    row.innerHTML='<div class="pinno">'+(k+1)+'</div><div><div class="stop-top"><div class="stop-name">'+esc(s.n)+'</div>'+(s.rate?'<span class="stop-rate">'+esc(s.rate)+'</span>':'')+'</div><div class="stop-time">'+esc(s.t)+'</div><div class="stop-desc">'+esc(s.d)+'</div></div>';
+    row.addEventListener('click',function(){hl(k+1,false);});
+    li.appendChild(row);
+
+    // Budget Food Panel for Lunch & Day 4 Dinner
+    if(s.foods&&s.foods.length){
+      var fp=mk('div','food-panel');
+      var fhead=mk('div','food-head');
+      var isDinner=s.n.toLowerCase().indexOf('dinner')>-1;
+      fhead.innerHTML='<div class="food-title">🍴 '+(isDinner?'Budget Dinner Spots near Finchley Road (Stop CL)':'Walkable Budget Lunch Picks (near prior stop)')+'</div><div class="food-sub">Filter by cuisine · Click "Map" to locate</div>';
+      fp.appendChild(fhead);
+
+      var cats=['All','Burger','Pizza','Indian','Asian','Fast Food'];
+      var filters=mk('div','food-filters');
+      var grid=mk('div','food-grid');
+
+      function drawFood(cat){
+        grid.innerHTML='';
+        s.foods.filter(function(fd){return cat==='All'||fd.cat===cat;}).forEach(function(fd){
+          var card=mk('div','food-card');
+          card.innerHTML='<div class="food-card-top"><div class="food-name">'+esc(fd.name)+'</div><span class="food-price">'+esc(fd.price)+'</span></div>'+
+            '<div class="food-meta"><span class="food-tag">'+esc(fd.cuisine)+'</span><span>· '+esc(fd.walk)+'</span></div>'+
+            '<div class="food-note">'+esc(fd.note)+'</div>';
+          var acts=mk('div','food-actions');
+          var mapBtn=mk('button','food-map-btn','📍 Show on map');
+          mapBtn.addEventListener('click',function(e){e.stopPropagation();focusFoodOnMap(fd.name,fd.ll);});
+          var gLink=mk('a','food-gmaps','Google Maps ↗');
+          gLink.href=gmPlace(fd.q);gLink.target='_blank';gLink.rel='noopener noreferrer';
+          acts.appendChild(mapBtn);acts.appendChild(gLink);
+          card.appendChild(acts);grid.appendChild(card);
+        });
+        if(!grid.children.length){
+          grid.innerHTML='<div style="font-size:0.8rem;color:var(--ink3);padding:4px 0">No spots under that exact filter—tap "All" to see every nearby option.</div>';
+        }
+      }
+
+      cats.forEach(function(c,idx){
+        var b=mk('button','f-chip'+(idx===0?' active':''),c);
+        b.addEventListener('click',function(){
+          filters.querySelectorAll('.f-chip').forEach(function(x){x.classList.remove('active');});
+          b.classList.add('active');
+          drawFood(c);
+        });
+        filters.appendChild(b);
+      });
+      drawFood('All');
+      fp.appendChild(filters);fp.appendChild(grid);
+      li.appendChild(fp);
+    }
+
+    // Leg with step-by-step cheapest route + faster alternative
+    if(s.leg){
+      var mode=s.leg.cheapMode;
+      var lg=mk('div','leg '+mode);
+      var card=mk('div','leg-card');
+      var priceCls=mode==='walk'?'free':'cheapest';
+      var stepsHTML=s.leg.steps.map(function(st,idx){return '<li><span class="step-n">'+(idx+1)+'.</span><span>'+esc(st)+'</span></li>';}).join('');
+      var altHTML='';
+      if(s.leg.altSteps){
+        altHTML='<div class="leg-alt"><div class="leg-alt-title"><span>⚡ '+esc(s.leg.altLabel)+'</span><span class="leg-price tube-p">'+esc(s.leg.altPrice)+'</span></div><div>'+esc(s.leg.altSteps)+'</div></div>';
+      }
+      card.innerHTML='<div class="leg-header"><div class="leg-mode"><span class="leg-dot"></span>'+esc(s.leg.cheapLabel)+' · ~'+s.leg.cheapMin+' min</div><span class="leg-price '+priceCls+'">'+esc(s.leg.cheapPrice)+'</span></div>'+
+        '<ol class="leg-steps">'+stepsHTML+'</ol>'+altHTML;
+      lg.appendChild(card);
+      if(s.leg.flag){
+        lg.appendChild(mk('div','leg-flag','\u26a0 '+esc(s.leg.flag)));
+      }
+      li.appendChild(lg);
+    }
+    tl.appendChild(li);
+  });
+  root.appendChild(tl);
+
+  // Google Maps Links
+  var ls=mk('div','links-section');ls.appendChild(mk('div','links-title','Open Turn-by-Turn in Google Maps'));
+  var linkList=mk('div','links'),S=day.stops,mid=S.slice(1,-1).map(function(s){return s.q;}),arrow='<svg class="map-link-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
+  var allWalk=mk('a','map-link main','<div><div>All Day '+(i+1)+' Stops in Transit Mode</div><small>Live TfL bus &amp; Underground departures in Google Maps</small></div>'+arrow);
+  allWalk.href=gm(S[0].q,S[S.length-1].q,mid,'transit');allWalk.target='_blank';allWalk.rel='noopener noreferrer';
+  linkList.appendChild(allWalk);
+
+  var runs=[],cur=null;
+  S.forEach(function(s,k){
+    var nx=S[k+1];if(!nx||!s.leg)return;
+    if(s.leg.cheapMode==='walk'){if(!cur){cur=[k];runs.push(cur);}cur.push(k+1);}else cur=null;
+  });
+  runs.forEach(function(r){
+    var a=mk('a','map-link','<div><div>Walk: '+esc(S[r[0]].n)+' \u2192 '+esc(S[r[r.length-1]].n)+'</div><small>Stops '+(r[0]+1)+'\u2013'+(r[r.length-1]+1)+' (£0)</small></div>'+arrow);
+    a.href=gm(S[r[0]].q,S[r[r.length-1]].q,r.slice(1,-1).map(function(x){return S[x].q;}),'walking');
+    a.target='_blank';a.rel='noopener noreferrer';
+    linkList.appendChild(a);
+  });
+  ls.appendChild(linkList);root.appendChild(ls);
+
+  try{history.replaceState(null,'','#day-'+(i+1));}catch(e){}
+}
+
 // Init
-(function(){var tabsEl=document.getElementById('tabs');DAYS.forEach(function(d,i){var b=document.createElement('button');b.className='tab';b.setAttribute('role','tab');b.setAttribute('aria-controls','day');b.innerHTML='<b>'+d.tab+'</b><span>'+d.date+'</span>';b.addEventListener('click',function(){render(i);});tabsEl.appendChild(b);});function fromHash(){var m=/^#day-([1-4])$/.exec(location.hash);return m?+m[1]-1:0;}window.addEventListener('hashchange',function(){var i=fromHash();if(i!==current)render(i);});render(fromHash());})();
-  </script>
+(function(){
+  var tabsEl=document.getElementById('tabs');
+  DAYS.forEach(function(d,i){
+    var b=document.createElement('button');
+    b.className='tab';b.setAttribute('role','tab');b.setAttribute('aria-controls','day');
+    b.innerHTML='<b>'+d.tab+'</b><span>'+d.date.replace(' 2026','')+'</span>';
+    b.addEventListener('click',function(){render(i);});
+    tabsEl.appendChild(b);
+  });
+  function fromHash(){var m=/^#day-([1-4])$/.exec(location.hash);return m?+m[1]-1:0;}
+  window.addEventListener('hashchange',function(){var i=fromHash();if(i!==current)render(i);});
+  render(fromHash());
+})();
+</script>
 </body>
 </html>
