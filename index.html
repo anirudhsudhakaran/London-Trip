@@ -105,15 +105,23 @@
     /* Mapbox */
     .mapbox{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm)}
     .map-toolbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;padding:10px 14px;border-bottom:1px solid var(--border);background:var(--bg2)}
+    .map-toolbar-right{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
     .map-mode-group{display:inline-flex;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-pill);padding:3px;gap:2px}
     .map-mode-btn{font-size:0.76rem;font-weight:600;padding:5px 12px;border-radius:var(--radius-pill);color:var(--ink2);transition:all var(--t) var(--ease)}
     .map-mode-btn.active{background:var(--walk);color:var(--pin-ink)}
-    .map-toggle-food{display:inline-flex;align-items:center;gap:6px;font-size:0.76rem;font-weight:600;padding:6px 12px;border-radius:var(--radius-pill);border:1px solid var(--border);background:var(--surface);color:var(--ink2);transition:all var(--t) var(--ease)}
+    .map-toggle-food,.map-toggle-labels{display:inline-flex;align-items:center;gap:6px;font-size:0.76rem;font-weight:600;padding:6px 12px;border-radius:var(--radius-pill);border:1px solid var(--border);background:var(--surface);color:var(--ink2);transition:all var(--t) var(--ease)}
     .map-toggle-food.active{border-color:var(--food-border);background:var(--food-bg);color:var(--food)}
-    .map-canvas{position:relative;width:100%;height:420px;background:var(--bg)}
+    .map-toggle-labels.active{border-color:rgba(56,189,248,0.4);background:rgba(56,189,248,0.12);color:#F8FAFC}
+    [data-theme="light"] .map-toggle-labels.active{color:var(--walk)}
+    .map-canvas{position:relative;width:100%;height:440px;background:var(--bg)}
     .map-canvas.vector-mode{height:auto}
-    #leafletMap{width:100%;height:420px;z-index:1;background:var(--bg)}
+    #leafletMap{width:100%;height:440px;z-index:1;background:var(--bg)}
     .leaflet-container{font-family:var(--font-body);background:var(--bg)!important}
+    .carto-base-dark{filter:brightness(1.22) contrast(1.08)}
+    .carto-labels-dark{filter:invert(1) brightness(1.9) contrast(1.5)}
+    .stop-lbl-tip{background:rgba(7,14,27,0.92)!important;color:#FFFFFF!important;border:1px solid rgba(56,189,248,0.45)!important;border-radius:6px!important;padding:2px 6px!important;font-size:11px!important;font-weight:600!important;box-shadow:0 2px 8px rgba(0,0,0,0.65)!important;white-space:nowrap}
+    .stop-lbl-tip::before{display:none!important}
+    [data-theme="light"] .stop-lbl-tip{background:rgba(255,255,255,0.95)!important;color:#0D1B2A!important;border-color:rgba(3,105,161,0.35)!important}
     .leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--surface2);color:var(--ink);border:1px solid var(--border-h);box-shadow:var(--shadow)}
     .leaflet-popup-content{margin:10px 12px;font-size:0.82rem;line-height:1.45}
     .leaflet-popup-close-button{color:var(--ink2)!important}
@@ -234,7 +242,7 @@
           <div class="hero-pills">
             <span class="pill">📍 Brick Lane, E1 6RL</span>
             <span class="pill">🗓 1 – 4 Dec 2026</span>
-            <span class="pill">💷 Total Plan: £1,019.70</span>
+            <span class="pill">💷 Total Plan: £1,055.70 (incl. £36 transit cap)</span>
             <span class="pill accent">🚌 Bus £1.75–£1.85 Hopper · 🚇 Tube £3.00–£3.10</span>
           </div>
         </div>
@@ -251,7 +259,7 @@
   </div>
   <div class="page-wrap">
     <div id="day" role="tabpanel" aria-live="polite"></div>
-    <p class="footer-note">Live Street Map uses OpenStreetMap / CartoDB Dark Matter tiles when online, with an offline realistic vector map showing the River Thames, bridges, Royal Parks, road corridors &amp; Tube stations. London Trams only serve South London (Croydon/Wimbledon), so transit legs compare the cheaper TfL Bus (£1.75–£1.85 Hopper within 60 min) against the Underground (£3.00 off-peak / £3.10 peak; Zone 1–2 daily cap £8.90).</p>
+    <p class="footer-note">Live Street Map uses CARTO Dark Matter / Voyager tiles (with Esri Gray Canvas &amp; offline realistic Vector Route Map fallbacks showing the River Thames, bridges, Royal Parks, road corridors &amp; Tube stations). London Trams only serve South London (Croydon/Wimbledon), so transit legs compare the cheaper TfL Bus (£1.75–£1.85 Hopper within 60 min) against the Underground (£3.00 off-peak / £3.10 peak; Zone 1–2 daily cap £8.90).</p>
   </div>
   <button class="fab" id="shareBtn" aria-label="Share this page">
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
@@ -318,11 +326,11 @@ var BL={n:'Brick Lane AirBnB (E1 6RL)',q:'Brick Lane, London E1 6RL',ll:[51.5217
 
 var DAYS=[
 {
-  tab:'Day 1',date:'Tue 1 Dec 2026',title:'Arrival, Brick Lane Lunch, Westminster & Covent Garden',total:'£430.00',
+  tab:'Day 1',date:'Tue 1 Dec 2026',title:'Arrival, Brick Lane Lunch, Westminster, West End Lights & Covent Garden',total:'£430.00',
   notes:[
     'London Trams only run in South London (Croydon/Wimbledon), so Zone 1–2 legs compare TfL Bus (£1.75–£1.85 Hopper within 60 min) against the Tube (£3.00 off-peak / £3.10 peak) or Walking (£0).',
-    'Airbnb stay is 01/12–04/12 (£345). Standard check-in is often afternoon—confirm your 12:15 bag drop with the host beforehand; otherwise use luggage storage near Aldgate East/Liverpool St.',
-    'Only free sights today, keeping your attraction pass unused until Day 2. Sunset is ~15:55, so Trafalgar Square and Covent Garden are lit up for Christmas.'
+    'Airbnb stay is 01/12–04/12 (£345). Confirm your 12:15 bag drop with the host beforehand; otherwise use luggage storage near Aldgate East/Liverpool St.',
+    'Sunset is ~15:55, so Trafalgar Square, Regent Street Christmas angels, Carnaby Street, Chinatown, and Covent Garden are all lit up for your evening walk.'
   ],
   stops:[
     {n:'Coach to London · Victoria Coach Station',q:'Victoria Coach Station, London SW1W 9TP',ll:[51.4936,-0.1488],t:'06:45 – 11:25 (Arrive)',rate:'£40.00',d:'Overnight/morning coach arrives at Victoria Coach Station at 11:25.',
@@ -382,23 +390,41 @@ var DAYS=[
      }},
     {n:'Trafalgar Square',q:'Trafalgar Square, London WC2N 5DN',ll:[51.5080,-0.1281],t:'16:30 – 17:00',rate:'£0 (Free)',d:'Norwegian Christmas tree, fountains, and Nelson’s Column lit up after dusk (~15:55).',
      leg:{
-       cheapMode:'walk',cheapLabel:'Cheapest & Fastest: Walk',cheapPrice:'£0 (Free)',cheapMin:11,
-       steps:['Head northeast past St Martin-in-the-Fields along St Martin’s Lane, turn right onto Long Acre, and enter Covent Garden Market via James St.'],
-       path:[[51.5080,-0.1281],[51.5105,-0.1264],[51.5120,-0.1223]]
+       cheapMode:'walk',cheapLabel:'Cheapest & Fastest: Walk',cheapPrice:'£0 (Free)',cheapMin:9,
+       steps:['Walk northwest past the National Gallery via Pall Mall East & Haymarket to Piccadilly Circus, then north onto Regent Street.'],
+       path:[[51.5080,-0.1281],[51.5096,-0.1338],[51.5105,-0.1370]]
      }},
-    {n:'Covent Garden',q:'Covent Garden Market, London WC2E 8RF',ll:[51.5120,-0.1223],t:'17:15 – 19:00',rate:'£0 (Free)',d:'Festive Piazza, giant Christmas tree, street performers, and Apple Market halls.',
+    {n:'Regent Street',q:'Regent Street, London W1B 5AH',ll:[51.5105,-0.1370],t:'17:20 – 17:50',rate:'£0 (Free)',d:'Stroll beneath the iconic Spirit of Christmas glowing angel lights along the sweeping Regent Street curve.',
      leg:{
-       cheapMode:'bus',cheapLabel:'Cheapest: Bus 26',cheapPrice:'£1.75–£1.85',cheapMin:36,
+       cheapMode:'walk',cheapLabel:'Cheapest & Fastest: Walk',cheapPrice:'£0 (Free)',cheapMin:5,
+       steps:['Turn east off Regent Street onto Beak Street or Great Marlborough Street directly into pedestrianised Carnaby Street.'],
+       path:[[51.5105,-0.1370],[51.5128,-0.1398],[51.5134,-0.1388]]
+     }},
+    {n:'Carnaby Street',q:'Carnaby Street, London W1F 9PS',ll:[51.5134,-0.1388],t:'18:00 – 18:30',rate:'£0 (Free)',d:'Soho’s vibrant pedestrian shopping lane with bold overhead Christmas installations & indie boutiques.',
+     leg:{
+       cheapMode:'walk',cheapLabel:'Cheapest & Fastest: Walk',cheapPrice:'£0 (Free)',cheapMin:8,
+       steps:['Head southeast through Soho via Brewer Street and Wardour Street straight under the Gerrard Street Chinatown gates.'],
+       path:[[51.5134,-0.1388],[51.5121,-0.1342],[51.5116,-0.1310]]
+     }},
+    {n:'Chinatown',q:'Chinatown, Gerrard Street, London W1D 5PT',ll:[51.5116,-0.1310],t:'18:45 – 19:15',rate:'£0 (Free)',d:'Red lantern canopies, Chinese bakeries, bubble tea & bustling evening atmosphere on Gerrard Street.',
+     leg:{
+       cheapMode:'walk',cheapLabel:'Cheapest & Fastest: Walk',cheapPrice:'£0 (Free)',cheapMin:9,
+       steps:['Walk east across Leicester Square via Cranbourn Street and continue along Long Acre & James Street into Covent Garden Piazza.'],
+       path:[[51.5116,-0.1310],[51.5110,-0.1280],[51.5120,-0.1223]]
+     }},
+    {n:'Covent Garden',q:'Covent Garden Market, London WC2E 8RF',ll:[51.5120,-0.1223],t:'19:30 – 20:00',rate:'£0 (Free)',d:'Festive Piazza, giant Christmas tree, street performers, and Apple Market halls.',
+     leg:{
+       cheapMode:'bus',cheapLabel:'Cheapest: Bus 26',cheapPrice:'£1.75–£1.85',cheapMin:35,
        steps:[
          'Walk 5 min south via Southampton St to Aldwych / Strand (Stop S).',
          'Board TfL Bus 26 towards Hackney Wick (via Fleet St, St Paul’s & Bank).',
          'Alight at Liverpool Street Station (Stop W) and walk 10–12 min east to Brick Lane E1 6RL.'
        ],
-       altMode:'tube',altLabel:'Faster alternative: Piccadilly → Central Line',altPrice:'£3.00 off-peak · 30 min',
+       altMode:'tube',altLabel:'Faster alternative: Piccadilly → Central Line',altPrice:'£3.00 off-peak · 28 min',
        altSteps:'Covent Garden Underground → Piccadilly line 1 stop to Holborn → Central line eastbound to Liverpool Street (~8 min) → 12 min walk east.',
        path:[[51.5120,-0.1223],[51.5122,-0.1170],[51.5136,-0.1040],[51.5178,-0.0823],[51.5217,-0.0716]]
      }},
-    {n:'Dinner · Brick Lane AirBnB',q:BL.q,ll:BL.ll,t:'19:45 – 20:45',rate:'£15.00',d:'Relaxed dinner back at Brick Lane AirBnB (or grab a £5–£7 bagel/curry nearby).'}
+    {n:'Dinner · Brick Lane AirBnB',q:BL.q,ll:BL.ll,t:'20:30 – 21:30',rate:'£15.00',d:'Relaxed dinner back at Brick Lane AirBnB (or grab a £5–£7 bagel/curry nearby).'}
   ]
 },
 {
@@ -473,11 +499,11 @@ var DAYS=[
   ]
 },
 {
-  tab:'Day 3',date:'Thu 3 Dec 2026',title:"British Museum, Bloomsbury Lunch, Shrek's Adventure & London Eye",total:'£140.00',
+  tab:'Day 3',date:'Thu 3 Dec 2026',title:"British Museum, Bloomsbury Lunch, Horizon 22, Shrek's Adventure & London Eye",total:'£140.00',
   notes:[
     "Bonus for Thursday 3 Dec: Bloomsbury Farmers' Market runs every Thursday (09:00–14:00) at Torrington Square, 6 min from the British Museum, with ~20 hot street-food stalls (£7–£10)!",
-    "Shrek's Adventure is 14:30–16:00; allow ~30 min after leaving the British Museum at 13:00 for a quick lunch or takeaway near Great Russell St.",
-    'London Eye slot at 16:30 catches full dusk/night illuminations (sunset ~15:55) right next door to County Hall.'
+    'New stop: Horizon 22 (Level 58, 22 Bishopsgate, EC2N 4BQ) at 14:15–15:00. It is free, but requires an advance timed QR ticket (horizon22.co.uk) and airport-style security—leave lunch by 13:45 sharp.',
+    "London Eye at 17:15–18:00 catches full night illuminations (sunset ~15:55) right next door to Shrek's Adventure."
   ],
   stops:[
     {n:'Breakfast · Brick Lane AirBnB',q:BL.q,ll:BL.ll,t:'08:00 – 09:15',rate:'£15.00',d:'Breakfast at Brick Lane before heading west to Bloomsbury.',
@@ -493,34 +519,48 @@ var DAYS=[
        path:[[51.5217,-0.0716],[51.5178,-0.0823],[51.5174,-0.1200],[51.5165,-0.1310],[51.5194,-0.1270]]
      }},
     {n:'British Museum',q:'British Museum, London WC1B 3DG',ll:[51.5194,-0.1270],t:'10:00 – 13:00',rate:'£0 (Free)',d:'Rosetta Stone, Parthenon sculptures, Egyptian mummies & Great Court.'},
-    {n:'Lunch near British Museum',q:'Great Russell Street, London WC1B 3DG',ll:[51.5180,-0.1276],t:'13:00 – 14:00',rate:'£30.00 budget',isMeal:true,d:'Walkable budget lunches right around Bloomsbury, Great Russell St & Tottenham Court Rd.',
+    {n:'Lunch near British Museum',q:'Great Russell Street, London WC1B 3DG',ll:[51.5180,-0.1276],t:'13:00 – 13:45',rate:'£30.00 budget',isMeal:true,d:'45-min walkable lunch around Bloomsbury, Great Russell St & Holborn before heading east to Horizon 22.',
      foods:[
        {name:'Seoul Bakery',cuisine:'Asian (Korean)',cat:'Asian',walk:'2 min walk (14 Great Russell St)',price:'£8–£11',note:'Cult-favorite tiny Korean café—bibimbap, bulgogi & kimbap. (Often cash-preferred, bring £15 cash).',ll:[51.5173,-0.1287],q:'Seoul Bakery, 14 Great Russell Street, London'},
        {name:'Bloomsbury Farmers’ Market (Thu)',cuisine:'Street Food Mix',cat:'Fast Food',walk:'6 min walk (Torrington Sq)',price:'£7–£10',note:'Open Thursdays 09:00–14:00! ~20 hot street food stalls (Indian, Asian, burgers, falafel).',ll:[51.5223,-0.1304],q:'Bloomsbury Farmers Market, Torrington Square, London'},
        {name:'Indian YMCA Restaurant',cuisine:'Indian',cat:'Indian',walk:'12 min walk (41 Fitzroy Sq)',price:'£8–£11',note:'Legendary student canteen serving authentic, ultra-affordable South & North Indian curries and thalis.',ll:[51.5228,-0.1399],q:'Indian YMCA Restaurant, 41 Fitzroy Square, London'},
-       {name:'Pizza Union Holborn',cuisine:'Pizza',cat:'Pizza',walk:'6 min walk (1 New Oxford St)',price:'£6–£9',note:'Crispy 12" fire-baked Roman pizzas cooked in 3 mins—super fast before Shrek’s Adventure.',ll:[51.5173,-0.1230],q:'Pizza Union Holborn, 1 New Oxford Street, London'},
+       {name:'Pizza Union Holborn',cuisine:'Pizza',cat:'Pizza',walk:'6 min walk (1 New Oxford St)',price:'£6–£9',note:'Crispy 12" fire-baked Roman pizzas cooked in 3 mins—super fast for your 13:45 departure.',ll:[51.5173,-0.1230],q:'Pizza Union Holborn, 1 New Oxford Street, London'},
        {name:'Homeslice Neal’s Yard',cuisine:'Pizza',cat:'Pizza',walk:'9 min walk (13 Neal\'s Yard)',price:'£6–£8/slice',note:'Massive wood-fired 20" pizza sold by the giant slice in colourful Neal’s Yard.',ll:[51.5145,-0.1264],q:'Homeslice, 13 Neals Yard, London'},
        {name:'Hare & Tortoise (Brunswick)',cuisine:'Asian',cat:'Asian',walk:'10 min walk (Brunswick Centre)',price:'£10–£14',note:'Generous pan-Asian bowls—katsu curry, ramen, sushi & pad thai.',ll:[51.5244,-0.1243],q:'Hare and Tortoise, Brunswick Centre, London'},
        {name:'Honest Burgers / McDonald’s TCR',cuisine:'Burger / American',cat:'Burger',walk:'6 min walk (Tottenham Ct Rd)',price:'£6–£14',note:'McDonald’s for quick £6–£8 meal, or Honest Burgers Soho/TCR for smashed burgers & rosemary fries.',ll:[51.5162,-0.1312],q:'Tottenham Court Road McDonalds, London'}
      ],
      leg:{
-       cheapMode:'bus',cheapLabel:'Cheapest: Bus 1 (or 59 / 68)',cheapPrice:'£1.75–£1.85',cheapMin:22,
+       cheapMode:'bus',cheapLabel:'Cheapest: Bus 8',cheapPrice:'£1.75–£1.85',cheapMin:28,
        steps:[
-         'Walk 3 min south to New Oxford St / Southampton Row (Stop Y / C).',
-         'Board TfL Bus 1 towards Canada Water (or 59/68 towards Waterloo) across Waterloo Bridge.',
-         'Alight at Waterloo Station / Tenison Way and walk 5 min west along York Rd / Belvedere Rd to County Hall.'
+         'Walk 3 min south to Museum Street / New Oxford St (Stop E).',
+         'Board TfL Bus 8 towards Bow Church (via Holborn, St Paul’s & Bank).',
+         'Alight at Threadneedle Street (Stop LN) and walk 3 min northeast onto Bishopsgate to 22 Bishopsgate (Horizon 22).'
        ],
-       altMode:'tube',altLabel:'Tube option: Northern Line',altPrice:'£3.00 off-peak · 24 min',
-       altSteps:'Walk 7 min to Tottenham Court Road → Northern line southbound (Charing Cross branch) to Embankment (6 min) → Walk 8 min across Golden Jubilee Bridge.',
-       path:[[51.5180,-0.1276],[51.5168,-0.1225],[51.5092,-0.1168],[51.5036,-0.1143],[51.5019,-0.1197]]
+       altMode:'tube',altLabel:'Faster for 14:15 slot: Central Line',altPrice:'£3.00 off-peak · 22 min',
+       altSteps:'Walk 6 min to Holborn (or Tottenham Court Rd) → Central line eastbound to Bank (or Liverpool St) → 5 min walk to 22 Bishopsgate.',
+       flag:'Only 30 min between lunch (13:45) and Horizon 22 (14:15)—use the Central Line to clear building security in time.',
+       path:[[51.5180,-0.1276],[51.5174,-0.1200],[51.5133,-0.0886],[51.5146,-0.0825]]
      }},
-    {n:"Shrek's Adventure! London (County Hall)",q:"Shrek's Adventure London, Westminster Bridge Road, London SE1 7PB",ll:[51.5019,-0.1197],t:'14:30 – 16:00',rate:'£40.00',d:'Interactive DreamWorks walkthrough & 4D bus ride inside County Hall (60–90 min).',
+    {n:'Horizon 22 (22 Bishopsgate)',q:'Horizon 22, 22 Bishopsgate, London EC2N 4BQ',ll:[51.5146,-0.0825],t:'14:15 – 15:00',rate:'£0 (Free booking)',d:'London’s highest free public viewing gallery on Level 58—panoramic 300° views across the City & Thames.',
+     leg:{
+       cheapMode:'bus',cheapLabel:'Cheapest: Bus 381 (via London Bridge)',cheapPrice:'£1.75–£1.85',cheapMin:34,
+       steps:[
+         'Walk 10 min south along Bishopsgate & King William St across London Bridge to London Bridge Station (Stop R, Tooley St).',
+         'Board TfL Bus 381 towards County Hall / Waterloo via Southwark St.',
+         'Alight at County Hall / Westminster Bridge directly outside Shrek’s Adventure. (Or take Bus 26 from Threadneedle St → Aldwych + Bus 1/59/68 on 1 Hopper fare).'
+       ],
+       altMode:'tube',altLabel:'Faster for 15:30 slot: Waterloo & City Line',altPrice:'£3.00 off-peak · 18 min',
+       altSteps:'Walk 5 min to Bank Underground → Waterloo & City line direct to Waterloo (4 min!) → Walk 5 min west along York Rd to County Hall.',
+       flag:'30 min transfer (15:00 → 15:30): Waterloo & City Line from Bank is nearly twice as fast as the bus.',
+       path:[[51.5146,-0.0825],[51.5133,-0.0886],[51.5052,-0.0864],[51.5036,-0.1143],[51.5019,-0.1197]]
+     }},
+    {n:"Shrek's Adventure! London (County Hall)",q:"Shrek's Adventure London, Westminster Bridge Road, London SE1 7PB",ll:[51.5019,-0.1197],t:'15:30 – 17:00',rate:'£40.00',d:'Interactive DreamWorks walkthrough & 4D bus ride inside County Hall (60–90 min).',
      leg:{
        cheapMode:'walk',cheapLabel:'Cheapest & Fastest: Walk',cheapPrice:'£0 (Free)',cheapMin:3,
        steps:['Step out onto the Queen’s Walk riverside promenade—the London Eye boarding area is immediately next door.'],
        path:[[51.5019,-0.1197],[51.5033,-0.1195]]
      }},
-    {n:'London Eye',q:'London Eye, London SE1 7PB',ll:[51.5033,-0.1195],t:'16:30 – 17:15',rate:'£40.00',d:'30-minute twilight/night rotation over Westminster & the illuminated Thames.',
+    {n:'London Eye',q:'London Eye, London SE1 7PB',ll:[51.5033,-0.1195],t:'17:15 – 18:00',rate:'£40.00',d:'30-minute night rotation over Westminster & the illuminated Thames.',
      leg:{
        cheapMode:'bus',cheapLabel:'Cheapest: Walk + Bus 26',cheapPrice:'£1.75–£1.85',cheapMin:40,
        steps:[
@@ -532,7 +572,7 @@ var DAYS=[
        altSteps:'Walk 6 min to Waterloo → Waterloo & City line to Bank (4 min) → Central line 1 stop to Liverpool Street → 12 min walk east.',
        path:[[51.5033,-0.1195],[51.5112,-0.1155],[51.5136,-0.1040],[51.5178,-0.0823],[51.5217,-0.0716]]
      }},
-    {n:'Dinner · Brick Lane AirBnB',q:BL.q,ll:BL.ll,t:'18:00 – 20:00',rate:'£15.00',d:'Dinner back at Brick Lane AirBnB.'}
+    {n:'Dinner · Brick Lane AirBnB',q:BL.q,ll:BL.ll,t:'18:30 – 20:00',rate:'£15.00',d:'Dinner back at Brick Lane AirBnB.'}
   ]
 },
 {
@@ -812,24 +852,69 @@ function initLeaflet(dayIdx){
   var day=DAYS[dayIdx];
   leafletMap=L.map(el,{zoomControl:true,attributionControl:true});
 
-  var tileUrl=isDark
-    ?'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-    :'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+  var CARTO_KEY='cb1_5fxj_1_e4bc162f937c699545c3265b';
+  var baseUrl=isDark
+    ?'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png?key='+CARTO_KEY
+    :'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png?key='+CARTO_KEY;
+  var labelUrl=isDark
+    ?'https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png?key='+CARTO_KEY
+    :'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png?key='+CARTO_KEY;
 
-  var tileLayer=L.tileLayer(tileUrl,{
+  function addEsriFallback(){
+    var base=L.tileLayer(
+      isDark
+        ?'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}'
+        :'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+      {maxZoom:16,attribution:'&copy; Esri, HERE, Garmin, OpenStreetMap'}
+    );
+    var ref=L.tileLayer(
+      isDark
+        ?'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}'
+        :'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}',
+      {maxZoom:16}
+    );
+    var esriErrors=0;
+    base.on('tileerror',function(){
+      esriErrors++;
+      if(esriErrors>4&&mapMode==='street'){
+        mapMode='vector';
+        render(dayIdx);
+        showToast('Offline or tiles blocked — switched to Vector Map');
+      }
+    });
+    base.addTo(leafletMap);
+    ref.addTo(leafletMap);
+  }
+
+  var baseLayer=L.tileLayer(baseUrl,{
     maxZoom:19,
+    subdomains:'abcd',
     attribution:'&copy; OpenStreetMap &copy; CARTO'
   });
-  var tileErrors=0;
-  tileLayer.on('tileerror',function(){
+  var labelLayer=L.tileLayer(labelUrl,{
+    maxZoom:19,
+    subdomains:'abcd',
+    pane:'overlayPane'
+  });
+  var tileErrors=0,fallbackTriggered=false;
+  baseLayer.on('tileerror',function(){
     tileErrors++;
-    if(tileErrors>4&&mapMode==='street'){
-      mapMode='vector';
-      render(dayIdx);
-      showToast('Offline or tiles blocked — switched to Vector Map');
+    if(tileErrors>4&&!fallbackTriggered){
+      fallbackTriggered=true;
+      try{leafletMap.removeLayer(baseLayer);}catch(e){}
+      try{leafletMap.removeLayer(labelLayer);}catch(e){}
+      addEsriFallback();
     }
   });
-  tileLayer.addTo(leafletMap);
+  baseLayer.addTo(leafletMap);
+  /* Label layer: in dark mode invert the dark-on-dark labels to white */
+  labelLayer.on('add',function(){
+    var c=labelLayer.getContainer?labelLayer.getContainer():null;
+    if(c&&isDark){
+      c.style.filter='invert(1) brightness(2.8) contrast(1.5) saturate(0)';
+    }
+  });
+  labelLayer.addTo(leafletMap);
 
   var bounds=L.latLngBounds([]);
 
